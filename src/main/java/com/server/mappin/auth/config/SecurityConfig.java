@@ -1,5 +1,6 @@
 package com.server.mappin.auth.config;
 
+import com.server.mappin.auth.handler.MyAuthenticationFailureHandler;
 import com.server.mappin.auth.handler.MyAuthenticationSuccessHandler;
 import com.server.mappin.auth.oauth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
-
+    private final MyAuthenticationFailureHandler myAuthenticationFailureHandler;
 
 
     @Bean
@@ -34,7 +35,8 @@ public class SecurityConfig {
                 .oauth2Login()
                 .userInfoEndpoint().userService(customOAuth2UserService)
                 .and()
-                .successHandler(myAuthenticationSuccessHandler);
+                .successHandler(myAuthenticationSuccessHandler)
+                .failureHandler(myAuthenticationFailureHandler);
         return http.build();
     }
 }
