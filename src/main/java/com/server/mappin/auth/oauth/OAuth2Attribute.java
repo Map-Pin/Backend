@@ -17,7 +17,8 @@ class OAuth2Attribute {
     private String email;
     private String name;
     private String picture;
-    private ProviderType providerType;
+    private String provider;
+    //private ProviderType providerType;
 
     static OAuth2Attribute of(String provider, String attributeKey,
                               Map<String, Object> attributes) {
@@ -26,6 +27,8 @@ class OAuth2Attribute {
                 return ofGoogle(provider.toUpperCase(), attributeKey, attributes);
             case "NAVER":
                 return ofNaver("id", attributes, provider.toUpperCase());
+            case "KAKAO":
+                return ofKakao("id",attributes,provider.toUpperCase());
             default:
                 throw new RuntimeException();
         }
@@ -37,7 +40,7 @@ class OAuth2Attribute {
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
                 .picture((String)attributes.get("picture"))
-                .providerType(ProviderType.valueOf(provider))
+                .provider(provider)
                 .attributes(attributes)
                 .attributeKey(attributeKey)
                 .build();
@@ -52,7 +55,7 @@ class OAuth2Attribute {
                 .name((String) response.get("name"))
                 .email((String) response.get("email"))
                 .picture((String) response.get("profile_image"))
-                .providerType(ProviderType.valueOf(provider))
+                .provider(provider)
                 .attributes(response)
                 .attributeKey(attributeKey)
                 .build();
@@ -70,7 +73,7 @@ class OAuth2Attribute {
                 .picture((String)kakaoProfile.get("profile_image_url"))
                 .attributes(kakaoAccount)
                 .attributeKey(attributeKey)
-                .providerType(ProviderType.valueOf(provider))
+                .provider(provider)
                 .build();
     }
 
@@ -82,7 +85,7 @@ class OAuth2Attribute {
         map.put("key", attributeKey);
         map.put("name", name);
         map.put("email", email);
-        map.put("provider", providerType);
+        map.put("provider", provider);
         map.put("picture", picture);
 
         return map;
