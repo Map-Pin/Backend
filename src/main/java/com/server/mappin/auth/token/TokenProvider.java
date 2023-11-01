@@ -30,16 +30,13 @@ public class TokenProvider implements InitializingBean {
     public static final String AUTHORIZATION = "Authorization";
     private final String secret;
     private final long AccessTokenValidityInMilliseconds;
-    private final long RefreshTokenValidityInMilliseconds;
 
     private Key key;
 
     public TokenProvider(@Value("${spring.jwt.secret}") String secret,
-                         @Value("${spring.jwt.access-token-validity-in-seconds}") long accessTokenValidityInMilliseconds,
-                         @Value("${spring.jwt.refresh-token-validity-in-seconds}000") long refreshTokenValidityInMilliseconds){
+                         @Value("${spring.jwt.access-token-validity-in-seconds}") long accessTokenValidityInMilliseconds){
         this.secret = secret;
         this.AccessTokenValidityInMilliseconds = accessTokenValidityInMilliseconds;
-        this.RefreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds;
     }
 
     //secret값을 BASE64 Decode해서 Key 변수에 할당
@@ -49,24 +46,25 @@ public class TokenProvider implements InitializingBean {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenDto generateToken(String email, String role){
+    public String generateToken(String email, String role){
         long now = (new Date()).getTime();
         Date accessValidity = new Date(now + this.AccessTokenValidityInMilliseconds);
-        Date refreshValidity = new Date(now + this.RefreshTokenValidityInMilliseconds);
+//        Date refreshValidity = new Date(now + this.RefreshTokenValidityInMilliseconds);
         String accessToken = Jwts.builder()
                 .setSubject(String.valueOf(email))
                 .claim("role",role)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(accessValidity)
                 .compact();
-        String refreshToken = Jwts.builder()
-                .setExpiration(refreshValidity)
-                .signWith(key,SignatureAlgorithm.HS512)
-                .compact();
-        return TokenDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+//        String refreshToken = Jwts.builder()
+//                .setExpiration(refreshValidity)
+//                .signWith(key,SignatureAlgorithm.HS512)
+//                .compact();
+//        return TokenDto.builder()
+//                .accessToken(accessToken)
+//                .refreshToken(refreshToken)
+//                .build();
+        return accessToken;
     }
 
     //권한 가져오기
@@ -110,7 +108,6 @@ public class TokenProvider implements InitializingBean {
     //Request 헤더에서 토큰 꺼내오기
     public String resolveToken(HttpServletRequest request){
         String token = request.getHeader(AUTHORIZATION);
-        System.out.println(token);
         if(StringUtils.hasText(token)&&token.startsWith("Bearer")){
             return token.substring(7);
         }
