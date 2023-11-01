@@ -22,7 +22,7 @@ spring:
 
   jpa : #jpa ??
     hibernate:
-      ddl-auto : update
+      ddl-auto : create
     properties:
       hibernate :
         #show_sql : true #??? ??? ??
@@ -39,7 +39,7 @@ spring:
           kakao:
             client-id: ${KAKAO_CLIENT}
             client-secret: ${KAKAO_SECRET}
-            redirect-uri: http://localhost:8080/auth/kakao/callback
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
             client-authentication-method: POST
             client-name: Kakao
