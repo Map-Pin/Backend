@@ -29,11 +29,12 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/auth/**","/login/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .oauth2Login()
-                .userInfoEndpoint().userService(customOAuth2UserService)
+                .oauth2Login() //Oauth2 로그인 설정 시작점
+                .userInfoEndpoint()//Oauth2 로그인 성공 이후 설정 담당
+                .userService(customOAuth2UserService)//Oauth2 로그인 성공 시, 후작업을 진행할 CustomOauth2UserService
                 .and()
                 .successHandler(myAuthenticationSuccessHandler)
                 .failureHandler(myAuthenticationFailureHandler);
