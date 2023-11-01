@@ -1,8 +1,8 @@
 package com.server.mappin.auth.config;
 
-import com.server.mappin.auth.handler.MyAuthenticationFailureHandler;
-import com.server.mappin.auth.handler.MyAuthenticationSuccessHandler;
-import com.server.mappin.auth.oauth.CustomOAuth2UserService;
+import com.server.mappin.auth.handler.JwtAccessDeniedHandler;
+import com.server.mappin.auth.handler.JwtAuthenticationEntryPoint;
+import com.server.mappin.auth.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +14,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
-    private final MyAuthenticationFailureHandler myAuthenticationFailureHandler;
-
+    private final TokenProvider tokenProvider;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -29,15 +28,14 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**","/login/**").permitAll()
+                .antMatchers("/login/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .oauth2Login() //Oauth2 로그인 설정 시작점
-                .userInfoEndpoint()//Oauth2 로그인 성공 이후 설정 담당
-                .userService(customOAuth2UserService)//Oauth2 로그인 성공 시, 후작업을 진행할 CustomOauth2UserService
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
                 .and()
-                .successHandler(myAuthenticationSuccessHandler)
-                .failureHandler(myAuthenticationFailureHandler);
+                .apply(new JwtSecurityConfig(tokenProvider));
         return http.build();
     }
 }
