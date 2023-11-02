@@ -53,6 +53,7 @@ public class MemberService {
                 .isSuccess("true")
                 .id(save.getId())
                 .jwt(jwt)
+                .token_type("Bearer")
                 .expires_in(accessTokenValidityInMilliseconds)
                 .build();
     }
