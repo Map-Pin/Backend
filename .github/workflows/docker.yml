@@ -16,19 +16,21 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Install Docker Compose
+      - name: Set up environment variables
         run: |
-          # Docker Compose 설치 스크립트
-          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o ./docker-compose
-          chmod +x ./docker-compose
-          sudo mv ./docker-compose /usr/local/bin/docker-compose
+          echo "DB_URL=${{ secrets.DB_URL }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "KAKAO_CLIENT=${{ secrets.KAKAO_CLIENT }}" >> .env
+          echo "KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}" >> .env
 
       - name: Build with Gradle
         run: ./gradlew clean build --exclude-task test
-
 
       ## 웹 이미지 빌드 및 도커허브에 push
       - name: web docker build and push
