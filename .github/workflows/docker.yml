@@ -54,15 +54,15 @@ jobs:
             # Docker 이미지 다운로드
             sudo docker pull ${{ secrets.DOCKER_REPO }}/mappin-server
             sudo docker pull ${{ secrets.DOCKER_REPO }}/mappin-nginx
+            
+            export DB_URL=${{ secrets.DB_URL }}
+            export DB_USERNAME=${{ secrets.DB_USERNAME }}
+            export DB_PASS=${{ secrets.DB_PASS }}
+            export JWT_SECRET=${{ secrets.JWT_SECRET }}
+            export KAKAO_CLIENT=${{ secrets.KAKAO_CLIENT }}
+            export KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}
 
             # Docker Compose 실행
-            docker-compose up -d \
-            -e DB_URL=${{ secrets.DB_URL }} \
-            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-            -e DB_PASS=${{ secrets.DB_PASS }} \
-            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            -e KAKAO_CLIENT=${{ secrets.KAKAO_CLIENT }} \
-            -e KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}
-
+            docker-compose up -d 
             # 사용하지 않는 Docker 이미지 정리
             sudo docker image prune -f
