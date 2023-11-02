@@ -38,15 +38,32 @@ jobs:
           docker push ${{ secrets.DOCKER_REPO }}/mappin-server
 
       ## docker compose up
-      - name: executing remote ssh commands using password
+      - name: Install Docker and Docker Compose on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: |
-            sudo docker rm -f $(docker ps -qa)
+            # Docker 설치
+            sudo apt-get update
+            sudo apt-get -y install docker.io
+            sudo systemctl start docker
+            sudo systemctl enable docker
+
+            # Docker Compose 설치
+            sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+
+            # 기존 컨테이너 제거
+            sudo docker rm -f $(sudo docker ps -qa)
+
+            # Docker 이미지 다운로드
             sudo docker pull ${{ secrets.DOCKER_REPO }}/mappin-server
             sudo docker pull ${{ secrets.DOCKER_REPO }}/mappin-nginx
-            docker-compose up -d
-            docker image prune -f
+
+            # Docker Compose 실행
+            sudo docker-compose up -d
+
+            # 사용하지 않는 Docker 이미지 정리
+            sudo docker image prune -f
