@@ -21,6 +21,9 @@ public class Member{
     private Long id;
 
     @Column
+    private String name;
+
+    @Column
     private String email;
 
     @Enumerated(value = EnumType.STRING)
@@ -35,7 +38,8 @@ public class Member{
 
 
     @Builder
-    public Member(String email, Role role, ProviderType providerType, LocalDateTime createdAt) {
+    public Member(String name, String email, Role role, ProviderType providerType, LocalDateTime createdAt) {
+        this.name = name;
         this.email = email;
         this.role = role;
         this.providerType = providerType;
