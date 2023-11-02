@@ -4,6 +4,7 @@ import com.server.mappin.domain.enums.ProviderType;
 import com.server.mappin.domain.enums.Role;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Getter
 @NoArgsConstructor
 public class Lost {
 

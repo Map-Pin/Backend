@@ -1,6 +1,7 @@
 package com.server.mappin.domain;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "Post")
 @NoArgsConstructor
+@Getter
 public class Post {
 
   @Id
@@ -30,8 +32,8 @@ public class Post {
   @Column(name = "created_at")
   private LocalDate createdAt;
 
-  @Column(name = "found_date")
-  private LocalDate foundDate;
+  @Column(name = "lost_date")
+  private LocalDate lostDate;
 
   private String imageUrl;
 
@@ -43,18 +45,22 @@ public class Post {
   @JoinColumn(name = "location_id")
   private Location location;
 
-  @Builder
+  @ManyToOne
+  @JoinColumn(name = "category_id")
+  private Category category;
 
-  public Post(Member member, String title, String content, LocalDate createdAt, LocalDate foundDate, String imageUrl, Integer x, Integer y, Location location) {
+  @Builder
+  public Post(Member member, String title, String content, LocalDate createdAt, LocalDate lostDate, String imageUrl, Integer x, Integer y, Location location, Category category) {
     this.member = member;
     this.title = title;
     this.content = content;
     this.createdAt = createdAt;
-    this.foundDate = foundDate;
+    this.lostDate = lostDate;
     this.imageUrl = imageUrl;
     this.x = x;
     this.y = y;
     this.location = location;
+    this.category = category;
   }
 }
 
