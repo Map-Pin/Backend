@@ -20,15 +20,6 @@ jobs:
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Set up environment variables
-        run: |
-          echo "DB_URL=${{ secrets.DB_URL }}" >> .env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-          echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "KAKAO_CLIENT=${{ secrets.KAKAO_CLIENT }}" >> .env
-          echo "KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}" >> .env
-
       - name: Build with Gradle
         run: ./gradlew clean build --exclude-task test
 
@@ -65,7 +56,13 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_REPO }}/mappin-nginx
 
             # Docker Compose 실행
-            sudo docker-compose up -d
+            docker-compose up -d \
+            -e DB_URL=${{ secrets.DB_URL }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e DB_PASS=${{ secrets.DB_PASS }} \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            -e KAKAO_CLIENT=${{ secrets.KAKAO_CLIENT }} \
+            -e KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}
 
             # 사용하지 않는 Docker 이미지 정리
             sudo docker image prune -f
