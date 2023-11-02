@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -20,12 +19,6 @@ jobs:
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Install Docker
-        run: |
-            # Docker 설치 스크립트
-            curl -fsSL https://get.docker.com -o get-docker.sh
-            sh get-docker.sh
-
       - name: Install Docker Compose
         run: |
           # Docker Compose 설치 스크립트
@@ -33,11 +26,7 @@ jobs:
           chmod +x ./docker-compose
           sudo mv ./docker-compose /usr/local/bin/docker-compose
 
-
       - name: Build with Gradle
-        # uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        # with:
-        #   arguments: build
         run: ./gradlew clean build --exclude-task test
 
 
@@ -45,8 +34,8 @@ jobs:
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }}/second-eyes-web .
-          docker push ${{ secrets.DOCKER_REPO }}/second-eyes-web
+          docker build -t ${{ secrets.DOCKER_REPO }}/mappin-server .
+          docker push ${{ secrets.DOCKER_REPO }}/mappin-server
 
       ## docker compose up
       - name: executing remote ssh commands using password
