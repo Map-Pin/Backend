@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -24,25 +25,27 @@ public class MemberService {
     public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);
     }
+
     @Transactional
     public LoginResponseDto create(MemberLoginDto memberCreateDto) {
         Member save;
-        Optional<Member> member1 = memberRepository.findByEmail(memberCreateDto.getEmail());
-        if(member1.isEmpty()){
+
+        Optional<Member> existingMember = memberRepository.findByEmail(memberCreateDto.getEmail());
+
+        if (existingMember.isPresent()) {
+            save = existingMember.get();
+        } else {
             Member member = new Member();
-            member.builder()
-                    .email(memberCreateDto.getEmail())
-                    .role(memberCreateDto.getRole())
-                    .name(memberCreateDto.getName())
-                    .createdAt(LocalDateTime.now())
-                    .providerType(ProviderType.KAKAO)
-                    .build();
+            member.setEmail(memberCreateDto.getEmail());
+            member.setRole(memberCreateDto.getRole());
+            member.setName(memberCreateDto.getName());
+            member.setCreatedAt(LocalDate.now());
+            member.setProviderType(ProviderType.KAKAO);
 
             save = memberRepository.save(member);
-        } else {
-            save = member1.get();
         }
-        String jwt = tokenProvider.generateToken(memberCreateDto.getEmail(), memberCreateDto.getRole().toString());
+
+        String jwt = tokenProvider.generateToken(save.getEmail(), save.getRole().toString());
 
         return LoginResponseDto.builder()
                 .id(save.getId())
