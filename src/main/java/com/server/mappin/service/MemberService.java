@@ -6,7 +6,9 @@ import com.server.mappin.domain.enums.ProviderType;
 import com.server.mappin.dto.LoginResponseDto;
 import com.server.mappin.dto.MemberLoginDto;
 import com.server.mappin.repository.MemberRepository;
+import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +22,7 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
-
+    @Value("${spring.jwt.access-token-validity-in-seconds}") long accessTokenValidityInMilliseconds;
     @Transactional
     public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);
@@ -48,8 +50,10 @@ public class MemberService {
         String jwt = tokenProvider.generateToken(save.getEmail(), save.getRole().toString());
 
         return LoginResponseDto.builder()
+                .isSuccess("true")
                 .id(save.getId())
                 .jwt(jwt)
+                .expires_in(accessTokenValidityInMilliseconds)
                 .build();
     }
 }

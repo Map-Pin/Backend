@@ -27,7 +27,7 @@ public class Lost {
   private String content;
 
   @Column(name = "created_at")
-  private LocalDate createdAt;
+  private LocalDateTime createdAt;
 
   @Column(name = "found_date")
   private LocalDate foundDate;
@@ -47,7 +47,7 @@ public class Lost {
   private Member member;
 
   @Builder
-  public Lost(String content, LocalDate createdAt, LocalDate foundDate, String imageUrl, int x, int y) {
+  public Lost(String content, LocalDateTime createdAt, LocalDate foundDate, String imageUrl, int x, int y) {
     this.content = content;
     this.createdAt = createdAt;
     this.foundDate = foundDate;
