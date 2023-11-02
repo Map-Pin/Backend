@@ -20,6 +20,18 @@ jobs:
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
 
+      - name: Install Docker
+        run: |
+            # Docker 설치 스크립트
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sh get-docker.sh
+
+      - name: Install Docker Compose
+        run: |
+          # Docker Compose 설치 스크립트
+          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+
       - name: Build with Gradle
         # uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         # with:
