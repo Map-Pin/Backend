@@ -97,7 +97,7 @@ jobs:
             echo "KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}" >> ~/.env
 
             # Copy .env file to the project directory
-            cp ~/.env /home/ubuntu/.env
+            #cp ~/.env /home/ubuntu/.env
 
 
 
