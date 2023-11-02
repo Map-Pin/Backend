@@ -8,6 +8,13 @@ services:
       - 8080
     ports:
       - 8080:8080
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASS=${DB_PASS}
+      - KAKAO_CLIENT=${KAKAO_CLIENT}
+      - KAKAO_SECRET=${KAKAO_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
 
   nginx:
     container_name: nginx
