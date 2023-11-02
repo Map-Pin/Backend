@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,10 +28,10 @@ public class Post {
   private String content;
 
   @Column(name = "created_at")
-  private LocalDateTime createdAt;
+  private LocalDate createdAt;
 
   @Column(name = "found_date")
-  private LocalDateTime foundDate;
+  private LocalDate foundDate;
 
   private String imageUrl;
 
@@ -44,7 +45,7 @@ public class Post {
 
   @Builder
 
-  public Post(Member member, String title, String content, LocalDateTime createdAt, LocalDateTime foundDate, String imageUrl, Integer x, Integer y, Location location) {
+  public Post(Member member, String title, String content, LocalDate createdAt, LocalDate foundDate, String imageUrl, Integer x, Integer y, Location location) {
     this.member = member;
     this.title = title;
     this.content = content;
