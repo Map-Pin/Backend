@@ -34,6 +34,5 @@ public class MemberService {
                 .id(save.getId())
                 .jwt(jwt)
                 .build();
-
     }
 }
