@@ -2,6 +2,7 @@ package com.server.mappin.service;
 
 import com.server.mappin.auth.token.TokenProvider;
 import com.server.mappin.domain.Member;
+import com.server.mappin.domain.enums.ProviderType;
 import com.server.mappin.dto.LoginResponseDto;
 import com.server.mappin.dto.MemberLoginDto;
 import com.server.mappin.repository.MemberRepository;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -24,11 +26,23 @@ public class MemberService {
     }
     @Transactional
     public LoginResponseDto create(MemberLoginDto memberCreateDto) {
-        Member member = new Member();
-        member.setEmail(memberCreateDto.getEmail());
-        member.setRole(memberCreateDto.getRole());
+        Member save;
+        Optional<Member> member1 = memberRepository.findByEmail(memberCreateDto.getEmail());
+        if(member1.isEmpty()){
+            Member member = new Member();
+            member.builder()
+                    .email(memberCreateDto.getEmail())
+                    .role(memberCreateDto.getRole())
+                    .name(memberCreateDto.getName())
+                    .createdAt(LocalDateTime.now())
+                    .providerType(ProviderType.KAKAO)
+                    .build();
+
+            save = memberRepository.save(member);
+        } else {
+            save = member1.get();
+        }
         String jwt = tokenProvider.generateToken(memberCreateDto.getEmail(), memberCreateDto.getRole().toString());
-        Member save = memberRepository.save(member);
 
         return LoginResponseDto.builder()
                 .id(save.getId())
