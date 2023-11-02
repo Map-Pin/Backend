@@ -119,6 +119,14 @@ jobs:
             export JWT_SECRET=${{ secrets.JWT_SECRET }}
             export KAKAO_CLIENT=${{ secrets.KAKAO_CLIENT }}
             export KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}
+            
+             # 중간 결과 출력
+            echo "DB_URL: $DB_URL"
+            echo "DB_USERNAME: $DB_USERNAME"
+            echo "DB_PASS: $DB_PASS"
+            echo "JWT_SECRET: $JWT_SECRET"
+            echo "KAKAO_CLIENT: $KAKAO_CLIENT"
+            echo "KAKAO_SECRET: $KAKAO_SECRET"
 
             # Docker Compose 실행
             sudo docker-compose up -d 
