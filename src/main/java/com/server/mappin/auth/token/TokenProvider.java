@@ -48,7 +48,8 @@ public class TokenProvider implements InitializingBean {
 
     public String generateToken(String email, String role){
         long now = (new Date()).getTime();
-        Date accessValidity = new Date(now + this.AccessTokenValidityInMilliseconds);
+        Date accessValidity = new Date(now + this.AccessTokenValidityInMilliseconds*1000);
+        System.out.println("accessValidity = " + accessValidity);
 //        Date refreshValidity = new Date(now + this.RefreshTokenValidityInMilliseconds);
         String accessToken = Jwts.builder()
                 .setSubject(String.valueOf(email))
