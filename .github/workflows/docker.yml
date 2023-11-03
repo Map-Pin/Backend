@@ -3,7 +3,7 @@ name: Issue 18 Workflow
 on:
   push:
     branches:
-      - dev
+      - issue/18
 
 jobs:
   build:
