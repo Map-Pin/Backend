@@ -1,0 +1,25 @@
+version: '3'
+services:
+
+  web:
+    container_name: server
+    image: sunwupark/mappin-server
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASS=${DB_PASS}
+      - KAKAO_CLIENT=${KAKAO_CLIENT}
+      - KAKAO_SECRET=${KAKAO_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+
+  nginx:
+    container_name: nginx
+    image: sunwupark/mappin-nginx
+    ports:
+      - 80:80
+    depends_on:
+      - web
