@@ -113,13 +113,9 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_REPO }}/mappin-server
             sudo docker pull ${{ secrets.DOCKER_REPO }}/mappin-nginx
             
-            # Nginx 재시작
-            echo "Restarting Nginx..."
-            sudo docker exec nginx /etc/init.d/nginx restart
-
             # Docker Compose 실행
             sudo docker-compose up -d 
+            
+            
             # 사용하지 않는 Docker 이미지 정리
             sudo docker image prune -f
-            
-            sudo docker logs nginx > /home/ubuntu/nginx_logs.txt
