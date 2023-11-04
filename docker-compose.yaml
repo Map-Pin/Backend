@@ -19,7 +19,6 @@ services:
     container_name: nginx
     image: sunwupark/mappin-nginx
     ports:
-      - 8080:80
+      - 80:80
     depends_on:
       - web
-    restart: always
