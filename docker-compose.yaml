@@ -23,5 +23,3 @@ services:
     depends_on:
       - web
     restart: always
-    volumes:
-      -
