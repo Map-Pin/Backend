@@ -6,8 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -36,9 +38,10 @@ public class Lost {
 
   private String imageUrl;
 
-  private Integer x;
 
-  private Integer y;
+  private Double x;
+
+  private Double y;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "category_id")
@@ -48,13 +51,22 @@ public class Lost {
   @JoinColumn(name = "member_id")
   private Member member;
 
+  @OneToOne
+  @JoinColumn(name = "location_id")
+  private Location location;
+
   @Builder
-  public Lost(String content, LocalDateTime createdAt, LocalDate foundDate, String imageUrl, int x, int y) {
+  public Lost(Long id, String title, String content, LocalDateTime createdAt, LocalDate foundDate, String imageUrl, Double x, Double y, Category category, Member member, Location location) {
+    this.id = id;
+    this.title = title;
     this.content = content;
     this.createdAt = createdAt;
     this.foundDate = foundDate;
     this.imageUrl = imageUrl;
     this.x = x;
     this.y = y;
+    this.category = category;
+    this.member = member;
+    this.location = location;
   }
 }
