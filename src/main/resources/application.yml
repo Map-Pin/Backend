@@ -1,0 +1,62 @@
+springdoc:
+  packages-to-scan: com.server.mappin.controller
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  api-docs:
+    groups:
+      enabled: true
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASS}
+
+  jpa : #jpa ??
+    hibernate:
+      ddl-auto : create
+    properties:
+      hibernate :
+        #show_sql : true #??? ??? ??
+        format_sql : true #??? ??
+  jwt:
+    header: Authorization
+    secret: ${JWT_SECRET}
+    access-token-validity-in-seconds: 1209600 # 2주
+    refresh-token-validity-in-seconds: 604800 #7?
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT}
+            client-secret: ${KAKAO_SECRET}
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+            client-name: Kakao
+            scope:
+              - profile_nickname
+              - profile_image
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+#  mvc:
+#    pathmatch:
+#      matching-strategy: ant_path_matcher
+
+logging.level:
+  org.hibernate.SQL: debug #??? ???? ??? ??? ??.
+  org.hibernate.type : trace #???? ?????? ? ? ?
