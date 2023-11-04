@@ -69,10 +69,10 @@ jobs:
           script: |
             if [ "$(sudo docker ps -aq)" ]; then
               sudo docker stop $(sudo docker ps -aq)
-              sudo docker rm $(sudo docker ps -aq)
+              sudo docker rm -f $(sudo docker ps -aq)
             fi
             if [ "$(sudo docker images -aq)" ]; then
-              sudo docker rmi $(sudo docker images -aq)
+              sudo docker rmi -f $(sudo docker images -aq)
             fi
 
       - name: Copy file to EC2
