@@ -22,4 +22,3 @@ services:
       - "80:80"
     depends_on:
       - web
-    #command: /wait-for-it.sh web:8080 -t 30 -- nginx -g "daemon off;"
