@@ -3,7 +3,7 @@ name: Issue 18 Workflow
 on:
   push:
     branches:
-      - main
+      - dev
 jobs:
   build:
     runs-on: ubuntu-latest
