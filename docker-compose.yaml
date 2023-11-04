@@ -1,7 +1,7 @@
 version: '3'
 services:
 
-  server:
+  web:
     container_name: server
     image: sunwupark/mappin-server
     expose:
@@ -22,4 +22,4 @@ services:
     ports:
       - 80:80
     depends_on:
-      - server
+      - web
