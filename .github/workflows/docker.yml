@@ -33,8 +33,7 @@ jobs:
           docker build -t ${{ secrets.DOCKER_REPO }}/mappin-server .
           docker push ${{ secrets.DOCKER_REPO }}/mappin-server
           
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }}/mappin-nginx -f Dockerfile-nginx .
+          docker build -t ${{ secrets.DOCKER_REPO }}/mappin-nginx -f dockerfile-nginx .
           docker push ${{ secrets.DOCKER_REPO }}/mappin-nginx
           
 
