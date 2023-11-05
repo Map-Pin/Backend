@@ -31,11 +31,7 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPO }}/mappin-server .
-          docker push ${{ secrets.DOCKER_REPO }}/mappin-server
-          
-          docker build -t ${{ secrets.DOCKER_REPO }}/mappin-nginx -f dockerfile-nginx .
-          docker push ${{ secrets.DOCKER_REPO }}/mappin-nginx
-          
+          docker push ${{ secrets.DOCKER_REPO }}/mappin-server          
 
       - name: Install Docker on EC2
         uses: appleboy/ssh-action@v0.1.6
