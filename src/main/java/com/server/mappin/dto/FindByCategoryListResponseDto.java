@@ -3,10 +3,12 @@ package com.server.mappin.dto;
 import lombok.Builder;
 import lombok.Data;
 
-@Data
+import java.util.List;
+
 @Builder
-public class LostRegisterResponseDto {
+@Data
+public class FindByCategoryListResponseDto {
     private int statusCode;
     private String isSuccess;
-    private Long lostId;
+    private List<FindByCategoryResponseDto> losts;
 }
