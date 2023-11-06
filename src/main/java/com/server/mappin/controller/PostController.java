@@ -15,9 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @Tag(name = "Post API",description = "게시물 관련 API")
 @RestController
@@ -32,7 +35,7 @@ public class PostController {
             @ApiResponse(responseCode ="400",description ="게시물 작성 실패",content = @Content(schema = @Schema(implementation = PostCreateResponseDto.class)))
     })
     @PutMapping("/post")
-    public ResponseEntity<?> create(@RequestBody PostCreateRequestDto postCreateDto, Authentication authentication){
+    public ResponseEntity<?> create(@ModelAttribute PostCreateRequestDto postCreateDto, Authentication authentication) throws IOException {
         try{
             String email = authentication.getName();
             PostCreateResponseDto postCreateResponseDto = postService.create(postCreateDto, email);
