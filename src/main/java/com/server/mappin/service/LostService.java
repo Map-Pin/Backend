@@ -17,8 +17,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,6 +33,8 @@ public class LostService {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
+    private final MapService mapService;
+    private final S3Service s3Service;
     public FindByCategoryListResponseDto findByCategory(String categoryName){
         List<Lost> losts = lostRepository.findByCategory(categoryName);
         List<FindByCategoryResponseDto> list = losts.stream()
@@ -47,10 +51,18 @@ public class LostService {
     }
 
     @Transactional
-    public LostRegisterResponseDto registerLost(LostRegisterRequestDto lostRegisterRequestDto, String email){
+    public LostRegisterResponseDto registerLost(LostRegisterRequestDto lostRegisterRequestDto, String email) throws IOException {
+        //String으로 받아온 yyyy-MM-dd를 LocalDate 형식으로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(lostRegisterRequestDto.getFoundDate(),formatter);
+        //회원, 카테고리 찾기
         Optional<Member> memberRepositoryByEmail = memberRepository.findByEmail(email);
         Optional<Category> categoryByName = categoryRepository.findCategoryByName(lostRegisterRequestDto.getCategory());
-        Optional<Location> locationByDong = locationRepository.findLocationByDong(lostRegisterRequestDto.getDong());
+        //x,y좌표로 동네 찾고 동네가 DB에 존재하는지 확인
+        String dong = mapService.getDong(lostRegisterRequestDto.getX(), lostRegisterRequestDto.getY());
+        Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
+        //이미지 S3에 업로드
+        String imageUrl = s3Service.upload(lostRegisterRequestDto.getImage(), "images");
         if(memberRepositoryByEmail.isPresent() && categoryByName.isPresent() && locationByDong.isPresent()){
             Member member = memberRepositoryByEmail.get();
             Location location = locationByDong.get();
@@ -60,7 +72,8 @@ public class LostService {
                     .content(lostRegisterRequestDto.getContent())
                     .x(lostRegisterRequestDto.getX())
                     .y(lostRegisterRequestDto.getY())
-                    .foundDate(lostRegisterRequestDto.getFoundDate())
+                    .foundDate(localDate)
+                    .imageUrl(imageUrl)
                     .createdAt(LocalDateTime.now())
                     .category(category)
                     .location(location)
@@ -70,13 +83,23 @@ public class LostService {
             return LostRegisterResponseDto.builder()
                     .statusCode(200)
                     .isSuccess("true")
-                    .lostId(save.getId())
+                    .title(lost.getTitle())
+                    .content(lost.getContent())
+                    .x(lost.getX())
+                    .y(lost.getY())
+                    .foundDate(lost.getFoundDate())
+                    .createdAt(lost.getCreatedAt())
+                    .image(lost.getImageUrl())
+                    .category(lost.getCategory().getName())
+                    .memberId(lost.getMember().getId())
+                    .dong(location.getDong())
+                    .lostId(lost.getId())
                     .build();
+
         }
         return LostRegisterResponseDto.builder()
                 .statusCode(400)
                 .isSuccess("false")
-                .lostId(null)
                 .build();
 
     }
