@@ -17,6 +17,9 @@ public interface LostRepository extends JpaRepository<Lost, Long> {
 
     @Query(value = "select l from Lost l left join fetch l.location c where c.dong = :dong")
     List<Lost> findLocationByDong(@Param("dong") String dong);
+
+    @Query("select l from Lost l " + "where l.member.id in (select s.member.id from Shop s where s.name = :name)")
+    List<Lost> findLostByShopName(@Param("name") String name);
     @Override
     <S extends Lost> S save(S entity);
 }
