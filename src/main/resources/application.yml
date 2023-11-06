@@ -67,8 +67,8 @@ spring:
 cloud:
   aws:
     credentials:
-      accessKey: ${S3Accesskey} # IAM 사용자 엑세스 키
-      secretKey: ${S3SecretKey} # IAM 사용자 비밀 엑세스 키
+      accessKey: ${S3ACCESSKEY} # IAM 사용자 엑세스 키
+      secretKey: ${S3SECRETKEY} # IAM 사용자 비밀 엑세스 키
     s3:
       bucket: mappin-s3 # 버킷명
     region:
