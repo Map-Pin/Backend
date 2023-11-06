@@ -56,13 +56,16 @@ public class PostService {
       Post save = postRepository.save(post);
       log.info(save.getTitle());
       return PostCreateResponseDto.builder()
+              .statusCode(200)
               .isSuccess("true")
               .postId(save.getId())
               .build();
 
     }
     return PostCreateResponseDto.builder()
+            .statusCode(400)
             .isSuccess("false")
+            .postId(null)
             .build();
   }
 }

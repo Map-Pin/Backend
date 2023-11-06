@@ -28,7 +28,8 @@ public class PostController {
 
     @Operation(summary = "게시물 작성",description = "게시물을 작성합니다")
     @ApiResponses({
-            @ApiResponse(content = @Content(schema = @Schema(implementation = PostCreateResponseDto.class)))
+            @ApiResponse(responseCode ="200",description ="게시물 작성 성공",content = @Content(schema = @Schema(implementation = PostCreateResponseDto.class))),
+            @ApiResponse(responseCode ="400",description ="게시물 작성 실패",content = @Content(schema = @Schema(implementation = PostCreateResponseDto.class)))
     })
     @PutMapping("/post")
     public ResponseEntity<?> create(@RequestBody PostCreateRequestDto postCreateDto, Authentication authentication){

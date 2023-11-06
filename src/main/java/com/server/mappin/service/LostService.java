@@ -4,6 +4,7 @@ import com.server.mappin.domain.Category;
 import com.server.mappin.domain.Location;
 import com.server.mappin.domain.Lost;
 import com.server.mappin.domain.Member;
+import com.server.mappin.dto.FindByCategoryListResponseDto;
 import com.server.mappin.dto.FindByCategoryResponseDto;
 import com.server.mappin.dto.LostRegisterRequestDto;
 import com.server.mappin.dto.LostRegisterResponseDto;
@@ -30,15 +31,19 @@ public class LostService {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
-    public List<FindByCategoryResponseDto> findByCategory(String categoryName){
+    public FindByCategoryListResponseDto findByCategory(String categoryName){
         List<Lost> losts = lostRepository.findByCategory(categoryName);
-        List<FindByCategoryResponseDto> result = losts.stream()
+        List<FindByCategoryResponseDto> list = losts.stream()
                 .map(lost -> FindByCategoryResponseDto.builder()
                         .id(lost.getId())
                         .title(lost.getTitle())
                         .build())
                 .collect(Collectors.toList());
-        return result;
+        return FindByCategoryListResponseDto.builder()
+                .statusCode(200)
+                .isSuccess("true")
+                .losts(list)
+                .build();
     }
 
     @Transactional
@@ -63,12 +68,15 @@ public class LostService {
                     .build();
             Lost save = lostRepository.save(lost);
             return LostRegisterResponseDto.builder()
+                    .statusCode(200)
                     .isSuccess("true")
                     .lostId(save.getId())
                     .build();
         }
         return LostRegisterResponseDto.builder()
+                .statusCode(400)
                 .isSuccess("false")
+                .lostId(null)
                 .build();
 
     }

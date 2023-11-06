@@ -1,8 +1,6 @@
 package com.server.mappin.controller;
 
-import com.server.mappin.dto.FindByCategoryResponseDto;
-import com.server.mappin.dto.LostRegisterRequestDto;
-import com.server.mappin.dto.LostRegisterResponseDto;
+import com.server.mappin.dto.*;
 import com.server.mappin.service.LostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,7 +25,8 @@ public class LostController {
     private final LostService lostService;
 
     @Operation(summary = "분실물 등록")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = LostRegisterResponseDto.class)))
+    @ApiResponse(responseCode ="200",description ="분실물 등록 성공",content = @Content(schema = @Schema(implementation = LostRegisterResponseDto.class)))
+    @ApiResponse(responseCode ="400",description ="분실물 등록 실패",content = @Content(schema = @Schema(implementation = LostRegisterResponseDto.class)))
     @PutMapping("/lost/register")
     public ResponseEntity<?> registerLost(@RequestBody LostRegisterRequestDto lostRegisterRequestDto, Authentication authentication){
         try{
@@ -39,12 +38,12 @@ public class LostController {
     }
 
     @Operation(summary = "카테고리 검색",description = "분실물을 카테고리 별로 검색")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = FindByCategoryResponseDto.class)))
+    @ApiResponse(responseCode = "200",description ="카테고리 별로 검색 성공", content = @Content(schema = @Schema(implementation = FindByCategoryListResponseDto.class)))
     @GetMapping("/search/category/{category_name}")
     public ResponseEntity<?> searchByCategory(@RequestParam(value = "category_name") String name){
         try{
-            List<FindByCategoryResponseDto> byCategory = lostService.findByCategory(name);
-            return new ResponseEntity<>(byCategory,HttpStatus.OK);
+            FindByCategoryListResponseDto findByCategoryListResponseDto = lostService.findByCategory(name);
+            return new ResponseEntity<>(findByCategoryListResponseDto,HttpStatus.OK);
         }catch (IllegalStateException e){
             return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
         }
