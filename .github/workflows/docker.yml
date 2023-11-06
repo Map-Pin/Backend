@@ -98,7 +98,7 @@ jobs:
             echo "KAKAO_CLIENT=${{ secrets.KAKAO_CLIENT }}" >> ~/.env
             echo "KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}" >> ~/.env
             echo "KAKAO_REST_API_KEY=${{ secrets.KAKAO_REST_API_KEY }}" >> ~/.env
-            echo "S3accessKey=${{ secrets.S3ACCESSKEY }}" >> ~/.env
+            echo "S3AccessKey=${{ secrets.S3ACCESSKEY }}" >> ~/.env
             echo "S3SecretKey=${{ secrets.S3SECRETKEY }}" >> ~/.env
 
             # Copy .env file to the project directory
