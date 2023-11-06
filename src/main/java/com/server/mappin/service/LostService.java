@@ -4,8 +4,8 @@ import com.server.mappin.domain.Category;
 import com.server.mappin.domain.Location;
 import com.server.mappin.domain.Lost;
 import com.server.mappin.domain.Member;
-import com.server.mappin.dto.FindByCategoryListResponseDto;
 import com.server.mappin.dto.FindByCategoryResponseDto;
+import com.server.mappin.dto.FindByDongResponseDto;
 import com.server.mappin.dto.LostRegisterRequestDto;
 import com.server.mappin.dto.LostRegisterResponseDto;
 import com.server.mappin.repository.CategoryRepository;
@@ -31,19 +31,27 @@ public class LostService {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
-    public FindByCategoryListResponseDto findByCategory(String categoryName){
+    public List<FindByCategoryResponseDto> findByCategory(String categoryName){
         List<Lost> losts = lostRepository.findByCategory(categoryName);
-        List<FindByCategoryResponseDto> list = losts.stream()
+        List<FindByCategoryResponseDto> result = losts.stream()
                 .map(lost -> FindByCategoryResponseDto.builder()
                         .id(lost.getId())
                         .title(lost.getTitle())
                         .build())
                 .collect(Collectors.toList());
-        return FindByCategoryListResponseDto.builder()
-                .statusCode(200)
-                .isSuccess("true")
-                .losts(list)
-                .build();
+        return result;
+    }
+
+    public List<FindByDongResponseDto> findByDong(String dongName){
+        List<Lost> dongs = lostRepository.findLocationByDong(dongName);
+        List<FindByDongResponseDto> result = dongs.stream()
+                .map(dong -> FindByDongResponseDto.builder()
+                        .id(dong.getId())
+                        .title(dong.getTitle())
+                        .dong(dong.getLocation().getDong())
+                        .build())
+                .collect(Collectors.toList());
+        return result;
     }
 
     @Transactional
@@ -68,16 +76,25 @@ public class LostService {
                     .build();
             Lost save = lostRepository.save(lost);
             return LostRegisterResponseDto.builder()
-                    .statusCode(200)
                     .isSuccess("true")
                     .lostId(save.getId())
                     .build();
         }
         return LostRegisterResponseDto.builder()
-                .statusCode(400)
                 .isSuccess("false")
-                .lostId(null)
                 .build();
 
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
