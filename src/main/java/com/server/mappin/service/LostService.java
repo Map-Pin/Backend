@@ -4,10 +4,7 @@ import com.server.mappin.domain.Category;
 import com.server.mappin.domain.Location;
 import com.server.mappin.domain.Lost;
 import com.server.mappin.domain.Member;
-import com.server.mappin.dto.FindByCategoryListResponseDto;
-import com.server.mappin.dto.FindByCategoryResponseDto;
-import com.server.mappin.dto.LostRegisterRequestDto;
-import com.server.mappin.dto.LostRegisterResponseDto;
+import com.server.mappin.dto.*;
 import com.server.mappin.repository.CategoryRepository;
 import com.server.mappin.repository.LocationRepository;
 import com.server.mappin.repository.LostRepository;
@@ -48,6 +45,19 @@ public class LostService {
                 .isSuccess("true")
                 .losts(list)
                 .build();
+    }
+    public List<FindByDongResponseDto> findByDong(String dongName){
+        List<Lost> dongs = lostRepository.findLocationByDong(dongName);
+        List<FindByDongResponseDto> result = dongs.stream()
+                .map(dong -> FindByDongResponseDto.builder()
+                        .id(dong.getId())
+                        .title(dong.getTitle())
+                        .dong(dong.getLocation().getDong())
+                        .imageUrl(dong.getImageUrl())
+                        .createdAt(dong.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+        return result;
     }
 
     @Transactional
