@@ -13,7 +13,7 @@ public class PostCreateRequestDto {
     private LocalDate date;
     private String dong;
     private String category;
-    private int x;
-    private int y;
+    private Double x;
+    private Double y;
 
 }

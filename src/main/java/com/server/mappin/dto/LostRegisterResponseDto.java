@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class LostRegisterResponseDto {
+    private int statusCode;
     private String isSuccess;
     private Long lostId;
 }
