@@ -1,13 +1,16 @@
 package com.server.mappin.domain;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "shop")
 @NoArgsConstructor
+@Getter @Setter
 public class Shop {
 
   @Id

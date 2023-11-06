@@ -31,9 +31,10 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPO }}/mappin-server .
-          docker push ${{ secrets.DOCKER_REPO }}/mappin-server
-          docker build -t ${{ secrets.DOCKER_REPO }}/mappin-nginx .
-          docker push ${{ secrets.DOCKER_REPO }}/mappin-nginx
+          docker push ${{ secrets.DOCKER_REPO }}/mappin-server     
+          
+          docker build -t ${{ secrets.DOCKER_REPO }}/mappin-nginx -f dockerfile-nginx .
+          docker push ${{ secrets.DOCKER_REPO }}/mappin-nginx    
 
       - name: Install Docker on EC2
         uses: appleboy/ssh-action@v0.1.6
@@ -67,10 +68,10 @@ jobs:
           script: |
             if [ "$(sudo docker ps -aq)" ]; then
               sudo docker stop $(sudo docker ps -aq)
-              sudo docker rm $(sudo docker ps -aq)
+              sudo docker rm -f $(sudo docker ps -aq)
             fi
             if [ "$(sudo docker images -aq)" ]; then
-              sudo docker rmi $(sudo docker images -aq)
+              sudo docker rmi -f $(sudo docker images -aq)
             fi
 
       - name: Copy file to EC2
@@ -96,6 +97,9 @@ jobs:
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/.env
             echo "KAKAO_CLIENT=${{ secrets.KAKAO_CLIENT }}" >> ~/.env
             echo "KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}" >> ~/.env
+            echo "KAKAO_REST_API_KEY=${{ secrets.KAKAO_REST_API_KEY }}" >> ~/.env
+            echo "S3accessKey=${{ secrets.S3ACCESSKEY }}" >> ~/.env
+            echo "S3SecretKey=${{ secrets.S3SECRETKEY }}" >> ~/.env
 
             # Copy .env file to the project directory
             #cp ~/.env /home/ubuntu/.env

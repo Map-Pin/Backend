@@ -1,14 +1,11 @@
 package com.server.mappin.dto;
 
-import lombok.Builder;
-import lombok.Data;
-
-@Data
-@Builder
-public class LoginResponseDto {
-    private String isSuccess;
-    private Long id;
-    private String jwt;
-    private String token_type;
-    private long expires_in;
+public interface LoginResponseDto {
+    int getStatusCode();
+    String getIsSuccess();
+    Long getId();
+    String getRole();
+    String getJwt();
+    String getToken_Type();
+    long getExpires_In();
 }
