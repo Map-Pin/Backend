@@ -49,6 +49,8 @@ public class LostService {
                         .id(dong.getId())
                         .title(dong.getTitle())
                         .dong(dong.getLocation().getDong())
+                        .imageUrl(dong.getImageUrl())
+                        .createdAt(dong.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
         return result;
