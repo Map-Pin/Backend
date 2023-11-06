@@ -21,6 +21,10 @@ spring:
     password: ${DB_PASS}
 
   jpa : #jpa ??
+    http:
+      encoding:
+        charset: UTF-8
+
     hibernate:
       ddl-auto : create
     properties:
@@ -56,6 +60,18 @@ spring:
 #  mvc:
 #    pathmatch:
 #      matching-strategy: ant_path_matcher
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${S3Accesskey} # IAM 사용자 엑세스 키
+      secretKey: ${S3SecretKey} # IAM 사용자 비밀 엑세스 키
+    s3:
+      bucket: mappin-s3 # 버킷명
+    region:
+      static: ap-northeast-2 # 리전
+    stack:
+      auto: false # Spring Cloud는 환경 또는 스택을 기반으로 이를 자동으로 감지
 
 logging.level:
   org.hibernate.SQL: debug #??? ???? ??? ??? ??.
