@@ -37,9 +37,9 @@ public class Post {
 
   private String imageUrl;
 
-  private Integer x;
+  private Double x;
 
-  private Integer y;
+  private Double y;
 
   @ManyToOne
   @JoinColumn(name = "location_id")
@@ -50,7 +50,7 @@ public class Post {
   private Category category;
 
   @Builder
-  public Post(Member member, String title, String content, LocalDate createdAt, LocalDate lostDate, String imageUrl, Integer x, Integer y, Location location, Category category) {
+  public Post(Member member, String title, String content, LocalDate createdAt, LocalDate lostDate, String imageUrl, Double x, Double y, Location location, Category category) {
     this.member = member;
     this.title = title;
     this.content = content;
