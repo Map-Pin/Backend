@@ -29,7 +29,7 @@ public class LostController {
   @Operation(summary = "분실물 등록")
   @ApiResponse(content = @Content(schema = @Schema(implementation = LostRegisterResponseDto.class)))
   @PutMapping("/lost/register")
-  public ResponseEntity<?> registerLost(@RequestBody LostRegisterRequestDto lostRegisterRequestDto, Authentication authentication) throws IOException {
+  public ResponseEntity<?> registerLost(@ModelAttribute LostRegisterRequestDto lostRegisterRequestDto, Authentication authentication) throws IOException {
     try {
       LostRegisterResponseDto lostRegisterResponseDto = lostService.registerLost(lostRegisterRequestDto, authentication.getName());
       return new ResponseEntity<>(lostRegisterResponseDto, HttpStatus.OK);
