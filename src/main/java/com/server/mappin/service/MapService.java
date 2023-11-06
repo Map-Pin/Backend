@@ -56,4 +56,28 @@ public class MapService {
         }
         return null;
     }
+
+    public String getDong(Double xCoordinate, Double yCoordinate){
+        String apiUrl = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization","KakaoAK "+apiKey);
+        HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
+        System.out.println("xCoordinate = " + xCoordinate);
+        URI builder = UriComponentsBuilder
+                .fromUriString(apiUrl)
+                .queryParam("x",xCoordinate)
+                .queryParam("y",yCoordinate)
+                .build()
+                .encode(StandardCharsets.UTF_8)
+                .toUri();
+        ResponseEntity<Map<String,Object>> response = new RestTemplate().exchange(builder, HttpMethod.GET, httpEntity, new ParameterizedTypeReference<Map<String,Object>>() {});
+        Map<String,Object> responseBody = response.getBody();
+        List<Map<String,Object>> documents = (List<Map<String, Object>>)responseBody.get("documents");
+        if(!documents.isEmpty()){
+            Map<String,Object> firstDocument = documents.get(0);
+            Object dong = firstDocument.get("region_3depth_name");
+            return (String)dong;
+        }
+        return null;
+    }
 }
