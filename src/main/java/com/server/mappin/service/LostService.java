@@ -5,10 +5,7 @@ import com.server.mappin.domain.Location;
 import com.server.mappin.domain.Lost;
 import com.server.mappin.domain.Member;
 import com.server.mappin.dto.*;
-import com.server.mappin.repository.CategoryRepository;
-import com.server.mappin.repository.LocationRepository;
-import com.server.mappin.repository.LostRepository;
-import com.server.mappin.repository.MemberRepository;
+import com.server.mappin.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -32,33 +29,24 @@ public class LostService {
     private final LocationRepository locationRepository;
     private final MapService mapService;
     private final S3Service s3Service;
-    public FindByCategoryListResponseDto findByCategory(String categoryName){
-        List<Lost> losts = lostRepository.findByCategory(categoryName);
-        List<FindByCategoryResponseDto> list = losts.stream()
-                .map(lost -> FindByCategoryResponseDto.builder()
-                        .id(lost.getId())
-                        .title(lost.getTitle())
-                        .build())
-                .collect(Collectors.toList());
-        return FindByCategoryListResponseDto.builder()
-                .statusCode(200)
-                .isSuccess("true")
-                .losts(list)
-                .build();
-    }
-    public List<FindByDongResponseDto> findByDong(String dongName){
-        List<Lost> dongs = lostRepository.findLocationByDong(dongName);
-        List<FindByDongResponseDto> result = dongs.stream()
-                .map(dong -> FindByDongResponseDto.builder()
-                        .id(dong.getId())
-                        .title(dong.getTitle())
-                        .dong(dong.getLocation().getDong())
-                        .imageUrl(dong.getImageUrl())
-                        .createdAt(dong.getCreatedAt())
-                        .build())
-                .collect(Collectors.toList());
-        return result;
-    }
+
+  public List<FindByCategoryResponseDto> findByCategory(String categoryName) {
+    List<Lost> losts = lostRepository.findByCategory(categoryName);
+    List<FindByCategoryResponseDto> result = losts.stream().map(lost -> FindByCategoryResponseDto.builder().id(lost.getId()).title(lost.getTitle()).build()).collect(Collectors.toList());
+    return result;
+  }
+
+  public List<FindByDongResponseDto> findByDong(String dongName) {
+    List<Lost> dongs = lostRepository.findLocationByDong(dongName);
+    List<FindByDongResponseDto> result = dongs.stream().map(dong -> FindByDongResponseDto.builder().id(dong.getId()).title(dong.getTitle()).dong(dong.getLocation().getDong()).imageUrl(dong.getImageUrl()).createdAt(dong.getCreatedAt()).build()).collect(Collectors.toList());
+    return result;
+  }
+
+  public List<FindByShopResponseDto> findByShop(String shopName) {
+    List<Lost> shops = lostRepository.findLostByShopName(shopName);
+    List<FindByShopResponseDto> result = shops.stream().map(shop -> FindByShopResponseDto.builder().id(shop.getId()).title(shop.getTitle()).shopName(shopName).imageUrl(shop.getImageUrl()).createdAt(shop.getCreatedAt()).build()).collect(Collectors.toList());
+    return result;
+  }
 
     @Transactional
     public LostRegisterResponseDto registerLost(LostRegisterRequestDto lostRegisterRequestDto, String email) throws IOException {
