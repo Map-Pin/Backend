@@ -6,6 +6,7 @@ import com.server.mappin.dto.PostCreateResponseDto;
 import com.server.mappin.dto.PostSearchResponseDto;
 import com.server.mappin.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,9 +15,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -27,16 +30,20 @@ import java.io.IOException;
 public class PostController {
     private final PostService postService;
 
-    @Operation(summary = "게시물 작성",description = "게시물을 작성합니다")
+    @Operation(summary = "게시물 작성",description = "Content-type은 multipart/form-data이지만 info는 application/json입니다")
     @ApiResponses({
             @ApiResponse(responseCode ="200",description ="게시물 작성 성공",content = @Content(schema = @Schema(implementation = PostCreateResponseDto.class))),
             @ApiResponse(responseCode ="400",description ="게시물 작성 실패",content = @Content(schema = @Schema(implementation = PostCreateResponseDto.class)))
     })
-    @PutMapping("/post")
-    public ResponseEntity<?> create(@ModelAttribute PostCreateRequestDto postCreateDto, Authentication authentication) throws IOException {
+    @PutMapping(value = "/post/new",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> create(
+            @RequestPart("image")MultipartFile image,
+            @RequestPart("info") PostCreateRequestDto postCreateDto,
+            Authentication authentication
+            ) throws IOException {
         try{
             String email = authentication.getName();
-            PostCreateResponseDto postCreateResponseDto = postService.create(postCreateDto, email);
+            PostCreateResponseDto postCreateResponseDto = postService.create(postCreateDto,image, email);
             return new ResponseEntity<>(postCreateResponseDto,HttpStatus.OK);
         }catch (IllegalStateException e){
             return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);

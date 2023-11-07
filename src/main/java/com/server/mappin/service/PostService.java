@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ public class PostService {
 
 
   @Transactional
-  public PostCreateResponseDto create(PostCreateRequestDto postCreateRequestDto, String email) throws IOException {
+  public PostCreateResponseDto create(PostCreateRequestDto postCreateRequestDto, MultipartFile image, String email) throws IOException {
     //String date -> LocalDate로 변경
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     LocalDate localDate = LocalDate.parse(postCreateRequestDto.getLostDate(),formatter);
@@ -46,7 +47,7 @@ public class PostService {
     Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
     Optional<Category> categoryByName = categoryRepository.findCategoryByName(postCreateRequestDto.getCategory());
     Optional<Member> memberByEmail = memberRepository.findByEmail(email);
-    String imageUrl = s3Service.upload(postCreateRequestDto.getImage(), "images");
+    String imageUrl = s3Service.upload(image, "images");
     Location location;
     Category category;
     Member member;

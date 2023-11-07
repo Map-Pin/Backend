@@ -11,9 +11,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Column;
 import java.io.IOException;
@@ -26,12 +28,15 @@ import java.util.List;
 public class LostController {
   private final LostService lostService;
 
-  @Operation(summary = "분실물 등록")
+  @Operation(summary = "분실물 등록", description = "Content-Type은 multipart/form-data이지만 info는 application/json입니다")
   @ApiResponse(content = @Content(schema = @Schema(implementation = LostRegisterResponseDto.class)))
-  @PutMapping("/lost/register")
-  public ResponseEntity<?> registerLost(@ModelAttribute LostRegisterRequestDto lostRegisterRequestDto, Authentication authentication) throws IOException {
+  @PutMapping(value = "/lost/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<?> registerLost(
+          @ModelAttribute("image") MultipartFile file,
+          @RequestPart("info") LostRegisterRequestDto lostRegisterRequestDto,
+          Authentication authentication) throws IOException {
     try {
-      LostRegisterResponseDto lostRegisterResponseDto = lostService.registerLost(lostRegisterRequestDto, authentication.getName());
+      LostRegisterResponseDto lostRegisterResponseDto = lostService.registerLost(lostRegisterRequestDto,file, authentication.getName());
       return new ResponseEntity<>(lostRegisterResponseDto, HttpStatus.OK);
     } catch (IllegalStateException e) {
       return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
