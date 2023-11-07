@@ -5,10 +5,7 @@ import com.server.mappin.domain.Location;
 import com.server.mappin.domain.Lost;
 import com.server.mappin.domain.Member;
 import com.server.mappin.dto.*;
-import com.server.mappin.repository.CategoryRepository;
-import com.server.mappin.repository.LocationRepository;
-import com.server.mappin.repository.LostRepository;
-import com.server.mappin.repository.MemberRepository;
+import com.server.mappin.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -32,33 +29,45 @@ public class LostService {
     private final LocationRepository locationRepository;
     private final MapService mapService;
     private final S3Service s3Service;
-    public FindByCategoryListResponseDto findByCategory(String categoryName){
-        List<Lost> losts = lostRepository.findByCategory(categoryName);
-        List<FindByCategoryResponseDto> list = losts.stream()
-                .map(lost -> FindByCategoryResponseDto.builder()
-                        .id(lost.getId())
-                        .title(lost.getTitle())
-                        .build())
-                .collect(Collectors.toList());
-        return FindByCategoryListResponseDto.builder()
-                .statusCode(200)
-                .isSuccess("true")
-                .losts(list)
-                .build();
+
+  public FindByCategoryListResponseDto findByCategory(String categoryName) {
+    List<Lost> losts = lostRepository.findByCategory(categoryName);
+
+    return FindByCategoryListResponseDto.builder()
+            .statusCode(200)
+            .isSuccess("true")
+            .losts(losts.stream().map(lost -> FindByCategoryResponseDto.builder()
+                    .id(lost.getId())
+                    .title(lost.getTitle())
+                    .creatdAt(lost.getCreatedAt())
+                    .imageUrl(lost.getImageUrl())
+                    .build())
+                    .collect(Collectors.toList()))
+            .build();
+  }
+
+  public List<FindByDongResponseDto> findByDong(String dongName) {
+    List<Lost> dongs = lostRepository.findLocationByDong(dongName);
+    List<FindByDongResponseDto> result = dongs.stream().map(dong -> FindByDongResponseDto.builder().id(dong.getId()).title(dong.getTitle()).dong(dong.getLocation().getDong()).imageUrl(dong.getImageUrl()).createdAt(dong.getCreatedAt()).build()).collect(Collectors.toList());
+    return result;
+  }
+
+  public List<FindByShopResponseDto> findByShop(String shopName) {
+    List<Lost> shops = lostRepository.findLostByShopName(shopName);
+    List<FindByShopResponseDto> result = shops.stream().map(shop -> FindByShopResponseDto.builder().id(shop.getId()).title(shop.getTitle()).shopName(shopName).imageUrl(shop.getImageUrl()).createdAt(shop.getCreatedAt()).build()).collect(Collectors.toList());
+    return result;
+  }
+
+  public List<FindByDongResponseDto> findByCurrentLocation(Double x, Double y) {
+    String dong = mapService.getDong(x, y);
+    System.out.println("dong = " + dong);
+    Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
+    if (locationByDong.isPresent()) {
+      Location location = locationByDong.get();
+      return findByDong(location.getDong());
     }
-    public List<FindByDongResponseDto> findByDong(String dongName){
-        List<Lost> dongs = lostRepository.findLocationByDong(dongName);
-        List<FindByDongResponseDto> result = dongs.stream()
-                .map(dong -> FindByDongResponseDto.builder()
-                        .id(dong.getId())
-                        .title(dong.getTitle())
-                        .dong(dong.getLocation().getDong())
-                        .imageUrl(dong.getImageUrl())
-                        .createdAt(dong.getCreatedAt())
-                        .build())
-                .collect(Collectors.toList());
-        return result;
-    }
+    return null;
+  }
 
     @Transactional
     public LostRegisterResponseDto registerLost(LostRegisterRequestDto lostRegisterRequestDto, String email) throws IOException {
@@ -112,5 +121,27 @@ public class LostService {
                 .isSuccess("false")
                 .build();
 
+    }
+
+    public LostSearchByIdResponseDto getById(Long id){
+        Optional<Lost> lostById = lostRepository.findById(id);
+        return lostById
+                .map(lost -> LostSearchByIdResponseDto.builder()
+                        .statusCode(200)
+                        .isSuccess("true")
+                        .title(lost.getTitle())
+                        .content(lost.getContent())
+                        .x(lost.getX())
+                        .y(lost.getY())
+                        .foundDate(lost.getFoundDate())
+                        .category(lost.getCategory().getName())
+                        .dong(lost.getLocation().getDong())
+                        .createdAt(lost.getCreatedAt())
+                        .image(lost.getImageUrl())
+                        .build())
+                .orElse(LostSearchByIdResponseDto.builder()
+                        .statusCode(400)
+                        .isSuccess("false")
+                        .build());
     }
 }

@@ -6,13 +6,11 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
 @Builder
-public class PostCreateResponseDto {
+@Data
+public class PostSearchResponseDto {
     private int statusCode;
     private String isSuccess;
-    private Long memberId;
-    private Long postId;
     private String title;
     private String content;
     private LocalDate lostDate;
@@ -23,4 +21,3 @@ public class PostCreateResponseDto {
     private String dong;
     private String category;
 }
-

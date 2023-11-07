@@ -6,16 +6,14 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
 @Builder
-public class PostCreateResponseDto {
+@Data
+public class LostSearchByIdResponseDto {
     private int statusCode;
     private String isSuccess;
-    private Long memberId;
-    private Long postId;
     private String title;
     private String content;
-    private LocalDate lostDate;
+    private LocalDate foundDate;
     private LocalDateTime createdAt;
     private String image;
     private Double x;
@@ -23,4 +21,3 @@ public class PostCreateResponseDto {
     private String dong;
     private String category;
 }
-

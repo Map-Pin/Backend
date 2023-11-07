@@ -30,7 +30,7 @@ public class Post {
   private String content;
 
   @Column(name = "created_at")
-  private LocalDate createdAt;
+  private LocalDateTime createdAt;
 
   @Column(name = "lost_date")
   private LocalDate lostDate;
@@ -50,7 +50,7 @@ public class Post {
   private Category category;
 
   @Builder
-  public Post(Member member, String title, String content, LocalDate createdAt, LocalDate lostDate, String imageUrl, Double x, Double y, Location location, Category category) {
+  public Post(Member member, String title, String content, LocalDateTime createdAt, LocalDate lostDate, String imageUrl, Double x, Double y, Location location, Category category) {
     this.member = member;
     this.title = title;
     this.content = content;
