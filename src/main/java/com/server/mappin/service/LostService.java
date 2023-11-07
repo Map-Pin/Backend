@@ -30,10 +30,20 @@ public class LostService {
     private final MapService mapService;
     private final S3Service s3Service;
 
-  public List<FindByCategoryResponseDto> findByCategory(String categoryName) {
+  public FindByCategoryListResponseDto findByCategory(String categoryName) {
     List<Lost> losts = lostRepository.findByCategory(categoryName);
-    List<FindByCategoryResponseDto> result = losts.stream().map(lost -> FindByCategoryResponseDto.builder().id(lost.getId()).title(lost.getTitle()).build()).collect(Collectors.toList());
-    return result;
+
+    return FindByCategoryListResponseDto.builder()
+            .statusCode(200)
+            .isSuccess("true")
+            .losts(losts.stream().map(lost -> FindByCategoryResponseDto.builder()
+                    .id(lost.getId())
+                    .title(lost.getTitle())
+                    .creatdAt(lost.getCreatedAt())
+                    .imageUrl(lost.getImageUrl())
+                    .build())
+                    .collect(Collectors.toList()))
+            .build();
   }
 
   public List<FindByDongResponseDto> findByDong(String dongName) {
