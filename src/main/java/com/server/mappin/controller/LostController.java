@@ -39,12 +39,12 @@ public class LostController {
   }
 
   @Operation(summary = "카테고리 검색", description = "분실물을 카테고리 별로 검색")
-  @ApiResponse(content = @Content(schema = @Schema(implementation = FindByCategoryResponseDto.class)))
+  @ApiResponse(content = @Content(schema = @Schema(implementation = FindByCategoryListResponseDto.class)))
   @GetMapping("/search/category/{category_name}")
   public ResponseEntity<?> searchByCategory(@RequestParam(value = "category_name") String name) {
     try {
-      List<FindByCategoryResponseDto> byCategory = lostService.findByCategory(name);
-      return new ResponseEntity<>(byCategory, HttpStatus.OK);
+      FindByCategoryListResponseDto findByCategoryListResponseDto = lostService.findByCategory(name);
+      return new ResponseEntity<>(findByCategoryListResponseDto, HttpStatus.OK);
     } catch (IllegalStateException e) {
       return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
     }
