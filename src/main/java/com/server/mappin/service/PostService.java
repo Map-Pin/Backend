@@ -6,6 +6,7 @@ import com.server.mappin.domain.Member;
 import com.server.mappin.domain.Post;
 import com.server.mappin.dto.PostCreateRequestDto;
 import com.server.mappin.dto.PostCreateResponseDto;
+import com.server.mappin.dto.PostSearchResponseDto;
 import com.server.mappin.repository.CategoryRepository;
 import com.server.mappin.repository.LocationRepository;
 import com.server.mappin.repository.MemberRepository;
@@ -89,4 +90,29 @@ public class PostService {
             .isSuccess("false")
             .build();
   }
+
+
+  public PostSearchResponseDto search(Long id){
+    Optional<Post> postRepositoryById = postRepository.findById(id);
+    return postRepositoryById
+            .map(post -> PostSearchResponseDto.builder()
+                    .statusCode(200)
+                    .isSuccess("true")
+                    .title(post.getTitle())
+                    .image(post.getImageUrl())
+                    .lostDate(post.getLostDate())
+                    .createdAt(post.getCreatedAt())
+                    .x(post.getX())
+                    .y(post.getY())
+                    .category(post.getCategory().getName())
+                    .dong(post.getLocation().getDong())
+                    .content(post.getContent())
+                    .build())
+            .orElse(PostSearchResponseDto.builder()
+                    .statusCode(400)
+                    .isSuccess("false")
+                    .build());
+
+  }
+
 }
