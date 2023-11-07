@@ -22,6 +22,9 @@ public interface LostRepository extends JpaRepository<Lost, Long> {
     List<Lost> findLostByShopName(@Param("name") String name);
     @Override
     <S extends Lost> S save(S entity);
+
+    @Override
+    Optional<Lost> findById(Long aLong);
 }
 
 

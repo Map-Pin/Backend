@@ -111,4 +111,26 @@ public class LostService {
                 .build();
 
     }
+
+    public LostSearchByIdResponseDto getById(Long id){
+        Optional<Lost> lostById = lostRepository.findById(id);
+        return lostById
+                .map(lost -> LostSearchByIdResponseDto.builder()
+                        .statusCode(200)
+                        .isSuccess("true")
+                        .title(lost.getTitle())
+                        .content(lost.getContent())
+                        .x(lost.getX())
+                        .y(lost.getY())
+                        .foundDate(lost.getFoundDate())
+                        .category(lost.getCategory().getName())
+                        .dong(lost.getLocation().getDong())
+                        .createdAt(lost.getCreatedAt())
+                        .image(lost.getImageUrl())
+                        .build())
+                .orElse(LostSearchByIdResponseDto.builder()
+                        .statusCode(400)
+                        .isSuccess("false")
+                        .build());
+    }
 }

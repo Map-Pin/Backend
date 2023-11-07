@@ -73,4 +73,18 @@ public class LostController {
       return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
     }
   }
+  @Operation(summary = "분실물 상세 조회",description = "분실물 Id로 분실물 상세 조회")
+  @ApiResponses({
+          @ApiResponse(responseCode = "200",description = "분실물 상세 조회 성공",content = @Content(schema = @Schema(implementation = LostSearchByIdResponseDto.class))),
+          @ApiResponse(responseCode = "400",description = "분실물 상세 조회 실패",content = @Content(schema = @Schema(implementation = LostSearchByIdResponseDto.class)))
+  })
+  @GetMapping("/lost/{lost_id}")
+  public ResponseEntity<?> getById(@RequestParam(value = "lost_id")Long id){
+    try{
+      LostSearchByIdResponseDto lostSearchByIdResponseDto = lostService.getById(id);
+      return new ResponseEntity<>(lostSearchByIdResponseDto,HttpStatus.OK);
+    }catch (IllegalStateException e){
+      return new ResponseEntity<>("에러가 발생했습니다",HttpStatus.CONFLICT);
+    }
+  }
 }
