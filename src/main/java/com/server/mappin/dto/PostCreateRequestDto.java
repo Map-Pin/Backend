@@ -12,7 +12,6 @@ public class PostCreateRequestDto {
     private String title;
     private String content;
     private String lostDate;
-    private MultipartFile image;
     private Double x;
     private Double y;
     private String category;
