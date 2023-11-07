@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -59,7 +60,7 @@ public class LostService {
   }
 
     @Transactional
-    public LostRegisterResponseDto registerLost(LostRegisterRequestDto lostRegisterRequestDto, String email) throws IOException {
+    public LostRegisterResponseDto registerLost(LostRegisterRequestDto lostRegisterRequestDto, MultipartFile image, String email) throws IOException {
         //String으로 받아온 yyyy-MM-dd를 LocalDate 형식으로 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(lostRegisterRequestDto.getFoundDate(),formatter);
@@ -70,7 +71,7 @@ public class LostService {
         String dong = mapService.getDong(lostRegisterRequestDto.getX(), lostRegisterRequestDto.getY());
         Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
         //이미지 S3에 업로드
-        String imageUrl = s3Service.upload(lostRegisterRequestDto.getImage(), "images");
+        String imageUrl = s3Service.upload(image, "images");
         if(memberRepositoryByEmail.isPresent() && categoryByName.isPresent() && locationByDong.isPresent()){
             Member member = memberRepositoryByEmail.get();
             Location location = locationByDong.get();

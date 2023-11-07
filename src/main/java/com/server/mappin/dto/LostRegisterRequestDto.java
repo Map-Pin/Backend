@@ -15,7 +15,6 @@ public class LostRegisterRequestDto {
     private String title;
     private String content;
     private String foundDate;
-    private MultipartFile image;
     private Double x;
     private Double y;
     private String dong;
