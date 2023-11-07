@@ -58,6 +58,17 @@ public class LostService {
     return result;
   }
 
+  public List<FindByDongResponseDto> findByCurrentLocation(Double x, Double y) {
+    String dong = mapService.getDong(x, y);
+    System.out.println("dong = " + dong);
+    Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
+    if (locationByDong.isPresent()) {
+      Location location = locationByDong.get();
+      return findByDong(location.getDong());
+    }
+    return null;
+  }
+
     @Transactional
     public LostRegisterResponseDto registerLost(LostRegisterRequestDto lostRegisterRequestDto, String email) throws IOException {
         //String으로 받아온 yyyy-MM-dd를 LocalDate 형식으로 변환
