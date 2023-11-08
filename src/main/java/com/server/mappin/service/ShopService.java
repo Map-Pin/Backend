@@ -10,4 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ShopService {
   private final ShopRepository shopRepository;
+
+  @Transactional
+  public ShopRegisterResponseDto shopRegister() {
+
+  }
 }
