@@ -55,8 +55,8 @@ public class PostController {
             @ApiResponse(responseCode = "200",description = "게시물 조회 성공",content = @Content(schema = @Schema(implementation = PostSearchResponseDto.class))),
             @ApiResponse(responseCode = "400",description = "게시물 조회 실패",content = @Content(schema = @Schema(implementation = PostCreateResponseDto.class)))
     })
-    @GetMapping("/post/{post_id}")
-    public ResponseEntity<?> search(@PathVariable("post_id") long id){
+    @GetMapping("/post/search/id")
+    public ResponseEntity<?> search(@RequestParam("id") long id){
         try{
             PostSearchResponseDto search = postService.search(id);
             return new ResponseEntity<>(search,HttpStatus.OK);
