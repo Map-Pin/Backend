@@ -73,6 +73,7 @@ public class PostService {
       return PostCreateResponseDto.builder()
               .statusCode(200)
               .isSuccess("true")
+              .title(save.getTitle())
               .postId(save.getId())
               .memberId(member.getId())
               .image(imageUrl)
