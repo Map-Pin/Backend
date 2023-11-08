@@ -1,9 +1,7 @@
 package com.server.mappin.controller;
 
 
-import com.server.mappin.dto.PostCreateRequestDto;
-import com.server.mappin.dto.PostCreateResponseDto;
-import com.server.mappin.dto.PostSearchResponseDto;
+import com.server.mappin.dto.*;
 import com.server.mappin.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,6 +43,27 @@ public class PostController {
             String email = authentication.getName();
             PostCreateResponseDto postCreateResponseDto = postService.create(postCreateDto,image, email);
             return new ResponseEntity<>(postCreateResponseDto,HttpStatus.OK);
+        }catch (IllegalStateException e){
+            return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
+        }
+    }
+
+    @Operation(summary = "게시물 수정",description = "Content-type은 multipart/form-data이지만 info는 application/json입니다")
+    @ApiResponses({
+            @ApiResponse(responseCode ="200",description ="게시물 수정 성공",content = @Content(schema = @Schema(implementation = PostUpdateResponseDto.class))),
+            @ApiResponse(responseCode ="400",description ="게시물 수정 실패",content = @Content(schema = @Schema(implementation = PostUpdateResponseDto.class)))
+    })
+    @PatchMapping(value = "/post/update/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(
+            @PathVariable("id") Long id,
+            @RequestPart("image") MultipartFile image,
+            @RequestPart("info") PostUpdateRequestDto postUpdateRequestDto,
+            Authentication authentication
+    ) throws IOException {
+        try{
+            String email = authentication.getName();
+            PostUpdateResponseDto postUpdateResponseDto = postService.update(id, postUpdateRequestDto, image, email);
+            return new ResponseEntity<>(postUpdateResponseDto,HttpStatus.OK);
         }catch (IllegalStateException e){
             return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
         }

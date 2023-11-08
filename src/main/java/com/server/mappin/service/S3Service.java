@@ -42,6 +42,10 @@ public class S3Service {
     return uploadImageUrl;
   }
 
+  public String findByUrl(String url){
+    return amazonS3Client.getUrl(bucket,url).toString();
+  }
+
   // S3 파일 삭제
   public void delete(String path) {
     amazonS3Client.deleteObject(bucket, path);
