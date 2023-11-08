@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-@Getter
 @NoArgsConstructor
 public class Lost {
 
