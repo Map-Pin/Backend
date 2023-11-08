@@ -1,9 +1,6 @@
 package com.server.mappin.service;
 
-import com.server.mappin.domain.Category;
-import com.server.mappin.domain.Location;
-import com.server.mappin.domain.Lost;
-import com.server.mappin.domain.Member;
+import com.server.mappin.domain.*;
 import com.server.mappin.dto.*;
 import com.server.mappin.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -145,4 +142,81 @@ public class LostService {
                         .isSuccess("false")
                         .build());
     }
+    @Transactional
+  public LostUpdateResponseDto update(Long lostId, LostUpdateRequestDto lostUpdateRequestDto, MultipartFile image, String email) throws IOException {
+    Lost lost = lostRepository.findById(lostId).orElseThrow(() -> new NullPointerException("해당 아이디가 존재하지 않습니다"));
+    Optional<Member> member = memberRepository.findByEmail(email);
+    if(member.isEmpty()){
+      return LostUpdateResponseDto.builder()
+              .statusCode(400)
+              .isSuccess("false")
+              .build();
+    }
+    else if(!member.get().getId().equals(lost.getMember().getId())){
+      return LostUpdateResponseDto.builder()
+              .statusCode(400)
+              .isSuccess("false")
+              .build();
+    }
+    System.out.println("member = " + member.get().getName());
+
+    // 업데이트 필드를 확인하고 필요한 경우 업데이트
+    if (lostUpdateRequestDto.getFoundDate() != null) {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+      LocalDate localDate = LocalDate.parse(lostUpdateRequestDto.getFoundDate(), formatter);
+      lost.setFoundDate(localDate);
+    }
+
+    if (lostUpdateRequestDto.getX() != null && lostUpdateRequestDto.getY() != null) {
+      String dong = mapService.getDong(lostUpdateRequestDto.getX(), lostUpdateRequestDto.getY());
+      Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
+      locationByDong.ifPresent(lost::setLocation);
+    }
+
+    if (lostUpdateRequestDto.getCategory() != null) {
+      Optional<Category> categoryByName = categoryRepository.findCategoryByName(lostUpdateRequestDto.getCategory());
+      categoryByName.ifPresent(lost::setCategory);
+    }
+
+    if (lostUpdateRequestDto.getContent() != null) {
+      lost.setContent(lostUpdateRequestDto.getContent());
+    }
+
+    if (lostUpdateRequestDto.getTitle() != null) {
+      lost.setTitle(lostUpdateRequestDto.getTitle());
+    }
+
+    if (image != null) {
+      // 이미지 업로드 및 기존 이미지 삭제 처리
+      if (!s3Service.findByUrl(lost.getImageUrl()).isEmpty()) {
+        s3Service.delete(lost.getImageUrl());
+      }
+      String imageUrl = s3Service.upload(image, "images");
+      lost.setImageUrl(imageUrl);
+    }
+
+    // 게시물 업데이트
+    Lost updatedLost = lostRepository.save(lost);
+
+    if (updatedLost != null) {
+      return LostUpdateResponseDto.builder()
+              .statusCode(200)
+              .isSuccess("true")
+              .lostId(updatedLost.getId())
+              .image(updatedLost.getImageUrl())
+              .createdAt(updatedLost.getCreatedAt())
+              .content(updatedLost.getContent())
+              .x(updatedLost.getX())
+              .y(updatedLost.getY())
+              .dong(updatedLost.getLocation().getDong())
+              .category(updatedLost.getCategory().getName())
+              .foundDate(updatedLost.getFoundDate())
+              .build();
+    } else {
+      return LostUpdateResponseDto.builder()
+              .statusCode(400)
+              .isSuccess("false")
+              .build();
+    }
+  }
 }
