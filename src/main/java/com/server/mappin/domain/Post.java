@@ -3,6 +3,7 @@ package com.server.mappin.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "Post")
 @NoArgsConstructor
 @Getter
+@Setter
 public class Post {
 
   @Id
