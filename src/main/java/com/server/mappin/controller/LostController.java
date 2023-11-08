@@ -81,7 +81,7 @@ public class LostController {
   @GetMapping("lost/search/dong")
   public ResponseEntity<?> searchByDong(@RequestParam(value = "name") String dongName) {
     try {
-      List<FindByDongResponseDto> byDong = lostService.findByDong(dongName);
+      FindByDongListResponseDto byDong = lostService.findByDong(dongName);
       return new ResponseEntity<>(byDong, HttpStatus.OK);
     } catch (IllegalStateException e) {
       return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
@@ -93,8 +93,8 @@ public class LostController {
   @GetMapping("lost/search/shop")
   public ResponseEntity<?> searchByShop(@RequestParam(value = "name") String shopName) {
     try {
-      List<FindByShopResponseDto> byDong = lostService.findByShop(shopName);
-      return new ResponseEntity<>(byDong, HttpStatus.OK);
+      FindByShopListResponseDto byShop = lostService.findByShop(shopName);
+      return new ResponseEntity<>(byShop, HttpStatus.OK);
     } catch (IllegalStateException e) {
       return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
     }
@@ -108,7 +108,7 @@ public class LostController {
           @RequestParam(value = "y") Double y
   ) {
     try {
-      List<FindByDongResponseDto> byDong = lostService.findByCurrentLocation(x, y);
+      FindByDongListResponseDto byDong = lostService.findByCurrentLocation(x, y);
       return new ResponseEntity<>(byDong, HttpStatus.OK);
     } catch (IllegalStateException e) {
       return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
