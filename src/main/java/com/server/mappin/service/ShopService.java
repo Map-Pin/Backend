@@ -3,6 +3,7 @@ package com.server.mappin.service;
 import com.server.mappin.domain.Location;
 import com.server.mappin.domain.Member;
 import com.server.mappin.domain.Shop;
+import com.server.mappin.domain.enums.Role;
 import com.server.mappin.dto.ShopRegisterRequestDto;
 import com.server.mappin.dto.ShopRegisterResponseDto;
 import com.server.mappin.repository.LocationRepository;
@@ -36,6 +37,7 @@ public class ShopService {
 
     if (memberByEmail.isPresent() && locationByDong.isPresent()) {
       Member member = memberByEmail.get();
+      member.setRole(Role.OWNER);
       Shop shop = Shop.builder()
               .member(member)
               .name(shopRegisterRequestDto.getName())
@@ -44,10 +46,11 @@ public class ShopService {
               .point(50)
               .companyNumber(shopRegisterRequestDto.getCompanyNumber())
               .build();
+      Member save1 = memberRepository.save(member);
       Shop save = shopRepository.save(shop);
       return ShopRegisterResponseDto.builder()
                 .shopId(save.getId())
-                .memberId(member.getId())
+                .memberId(save1.getId())
                 .name(save.getName())
                 .address(save.getAddress())
                 .dong(dong)
