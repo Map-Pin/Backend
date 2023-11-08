@@ -77,7 +77,7 @@ public class LostController {
   }
 
   @Operation(summary = "동 검색", description = "분실물을 동 별로 검색")
-  @ApiResponse(content = @Content(schema = @Schema(implementation = FindByDongResponseDto.class)))
+  @ApiResponse(content = @Content(schema = @Schema(implementation = FindByDongListResponseDto.class)))
   @GetMapping("lost/search/dong")
   public ResponseEntity<?> searchByDong(@RequestParam(value = "name") String dongName) {
     try {
@@ -89,7 +89,7 @@ public class LostController {
   }
 
   @Operation(summary = "가게 검색", description = "분실물을 가게이름 별로 검색")
-  @ApiResponse(content = @Content(schema = @Schema(implementation = FindByShopResponseDto.class)))
+  @ApiResponse(content = @Content(schema = @Schema(implementation = FindByShopListResponseDto.class)))
   @GetMapping("lost/search/shop")
   public ResponseEntity<?> searchByShop(@RequestParam(value = "name") String shopName) {
     try {
