@@ -32,7 +32,7 @@ public class LostController {
   @ApiResponse(content = @Content(schema = @Schema(implementation = LostRegisterResponseDto.class)))
   @PutMapping(value = "/lost/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<?> registerLost(
-          @ModelAttribute("image") MultipartFile file,
+          @RequestPart("image") MultipartFile file,
           @RequestPart("info") LostRegisterRequestDto lostRegisterRequestDto,
           Authentication authentication) throws IOException {
     try {
