@@ -44,21 +44,39 @@ public class LostService {
             .build();
   }
 
-  public List<FindByDongResponseDto> findByDong(String dongName) {
+  public FindByDongListResponseDto findByDong(String dongName) {
     List<Lost> dongs = lostRepository.findLocationByDong(dongName);
-    List<FindByDongResponseDto> result = dongs.stream().map(dong -> FindByDongResponseDto.builder().id(dong.getId()).title(dong.getTitle()).dong(dong.getLocation().getDong()).imageUrl(dong.getImageUrl()).createdAt(dong.getCreatedAt()).build()).collect(Collectors.toList());
-    return result;
+    return FindByDongListResponseDto.builder()
+            .statusCode(200)
+            .isSuccess("true")
+            .losts(dongs.stream().map(lost -> FindByDongResponseDto.builder()
+                            .id(lost.getId())
+                            .title(lost.getTitle())
+                            .createdAt(lost.getCreatedAt())
+                            .imageUrl(lost.getImageUrl())
+                            .build())
+                    .collect(Collectors.toList()))
+            .build();
   }
 
-  public List<FindByShopResponseDto> findByShop(String shopName) {
+  public FindByShopListResponseDto findByShop(String shopName) {
     List<Lost> shops = lostRepository.findLostByShopName(shopName);
-    List<FindByShopResponseDto> result = shops.stream().map(shop -> FindByShopResponseDto.builder().id(shop.getId()).title(shop.getTitle()).shopName(shopName).imageUrl(shop.getImageUrl()).createdAt(shop.getCreatedAt()).build()).collect(Collectors.toList());
-    return result;
+    return FindByShopListResponseDto.builder()
+            .statusCode(200)
+            .isSuccess("true")
+            .losts(shops.stream().map(lost -> FindByShopResponseDto.builder()
+                            .id(lost.getId())
+                            .title(lost.getTitle())
+                            .createdAt(lost.getCreatedAt())
+                            .imageUrl(lost.getImageUrl())
+                            .shopName(shopName)
+                            .build())
+                    .collect(Collectors.toList()))
+            .build();
   }
 
-  public List<FindByDongResponseDto> findByCurrentLocation(Double x, Double y) {
+  public FindByDongListResponseDto findByCurrentLocation(Double x, Double y) {
     String dong = mapService.getDong(x, y);
-    System.out.println("dong = " + dong);
     Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
     if (locationByDong.isPresent()) {
       Location location = locationByDong.get();
