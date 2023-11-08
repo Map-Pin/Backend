@@ -34,9 +34,6 @@ public class ShopService {
     String dong = mapService.getDong(point.getX(), point.getY());
     Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
 
-    System.out.println("memberByEmail = " + memberByEmail);
-    System.out.println("locationByDong = " + locationByDong);
-
     if (memberByEmail.isPresent() && locationByDong.isPresent()) {
       Member member = memberByEmail.get();
       Shop shop = Shop.builder()
