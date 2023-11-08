@@ -35,7 +35,7 @@ public class PostController {
             @ApiResponse(responseCode ="200",description ="게시물 작성 성공",content = @Content(schema = @Schema(implementation = PostCreateResponseDto.class))),
             @ApiResponse(responseCode ="400",description ="게시물 작성 실패",content = @Content(schema = @Schema(implementation = PostCreateResponseDto.class)))
     })
-    @PutMapping(value = "/post/new",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/post/register",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(
             @RequestPart("image")MultipartFile image,
             @RequestPart("info") PostCreateRequestDto postCreateDto,
