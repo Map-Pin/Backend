@@ -43,6 +43,27 @@ public class LostController {
     }
   }
 
+  @Operation(summary = "분실물 수정",description = "Content-type은 multipart/form-data이지만 info는 application/json입니다")
+  @ApiResponses({
+          @ApiResponse(responseCode ="200",description ="분실물 수정 성공",content = @Content(schema = @Schema(implementation = LostUpdateResponseDto.class))),
+          @ApiResponse(responseCode ="400",description ="분실물 수정 실패",content = @Content(schema = @Schema(implementation = LostUpdateResponseDto.class)))
+  })
+  @PatchMapping(value = "/lost/update/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<?> update(
+          @PathVariable("id") Long id,
+          @RequestPart("image") MultipartFile image,
+          @RequestPart("info") LostUpdateRequestDto lostUpdateRequestDto,
+          Authentication authentication
+  ) throws IOException {
+    try{
+      String email = authentication.getName();
+      LostUpdateResponseDto lostUpdateResponseDto = lostService.update(id, lostUpdateRequestDto, image, email);
+      return new ResponseEntity<>(lostUpdateResponseDto,HttpStatus.OK);
+    }catch (IllegalStateException e){
+      return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
+    }
+  }
+
   @Operation(summary = "카테고리 검색", description = "분실물을 카테고리 별로 검색")
   @ApiResponse(content = @Content(schema = @Schema(implementation = FindByCategoryListResponseDto.class)))
   @GetMapping("lost/search/category")
