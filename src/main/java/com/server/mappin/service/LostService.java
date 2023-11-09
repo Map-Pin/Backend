@@ -75,7 +75,7 @@ public class LostService {
             .build();
   }
 
-  public FindByDongListResponseDto findByCurrentLocation(Double x, Double y) {
+  /*public FindByDongListResponseDto findByCurrentLocation(Double x, Double y) {
     String dong = mapService.getDong(x, y);
     Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
     if (locationByDong.isPresent()) {
@@ -84,6 +84,24 @@ public class LostService {
     }
     return null;
   }
+  */
+
+  public FindByDongListResponseDto findByCurrentLocation(Double x, Double y) {
+    List<Lost> locationByDong = lostRepository.findAll();
+    return FindByDongListResponseDto.builder()
+            .statusCode(200)
+            .isSuccess("true")
+            .losts(locationByDong.stream().map(lost -> FindByDongResponseDto.builder()
+                            .id(lost.getId())
+                            .title(lost.getTitle())
+                            .createdAt(lost.getCreatedAt())
+                            .imageUrl(lost.getImageUrl())
+                            .build())
+                    .collect(Collectors.toList()))
+            .build();
+  }
+
+
 
     @Transactional
     public LostRegisterResponseDto registerLost(LostRegisterRequestDto lostRegisterRequestDto, MultipartFile image, String email) throws IOException {

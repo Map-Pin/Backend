@@ -43,7 +43,7 @@ public class MemberService {
         } else {
             Member member = new Member();
             member.setEmail(memberCreateDto.getEmail());
-            member.setRole(memberCreateDto.getRole());
+            member.setRole(Role.USER);
             member.setName(memberCreateDto.getName());
             member.setCreatedAt(LocalDate.now());
             member.setProviderType(ProviderType.KAKAO);
