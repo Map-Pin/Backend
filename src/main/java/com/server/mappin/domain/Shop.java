@@ -27,6 +27,9 @@ public class Shop {
   @Column(name = "address")
   private String address;
 
+  @Column(name = "companyNumber")
+  private String companyNumber;
+
   @ManyToOne
   @JoinColumn(name = "member_id")
   private Member member;
@@ -36,11 +39,12 @@ public class Shop {
   private Location location;
 
   @Builder
-  public Shop(String name, Integer point, String address, Member member, Location location) {
+  public Shop(String name, Integer point, String address, Member member, Location location, String companyNumber) {
     this.name = name;
     this.point = point;
     this.address = address;
     this.member = member;
     this.location = location;
+    this.companyNumber = companyNumber;
   }
 }
