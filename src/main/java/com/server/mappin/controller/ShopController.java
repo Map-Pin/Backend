@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@Tag(name = "Shop API", description = "분실물 관련 API 명세서")
+@Tag(name = "Shop API", description = "가게 관련 API 명세서")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
