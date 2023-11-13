@@ -1,5 +1,9 @@
 package com.server.mappin.service;
 
+import com.server.mappin.converter.CategoryConverter;
+import com.server.mappin.converter.LocationConverter;
+import com.server.mappin.converter.LostConverter;
+import com.server.mappin.converter.ShopConverter;
 import com.server.mappin.domain.*;
 import com.server.mappin.dto.Category.CategoryDTO;
 import com.server.mappin.dto.Location.LocationDTO;
@@ -32,45 +36,17 @@ public class LostService {
 
   public CategoryDTO.CategoryListResponseDTO findByCategory(String categoryName) {
     List<Lost> losts = lostRepository.findByCategory(categoryName);
-
-    return CategoryDTO.CategoryListResponseDTO.builder()
-            .result(losts.stream().map(lost -> CategoryDTO.CategoryResponseDTO.builder()
-                    .id(lost.getId())
-                    .title(lost.getTitle())
-                    .creatdAt(lost.getCreatedAt())
-                    .imageUrl(lost.getImageUrl())
-                    .build())
-                    .collect(Collectors.toList()))
-            .build();
+    return CategoryConverter.toCategoryList(losts);
   }
 
   public LocationDTO.LocationListResponseDTO findByDong(String dongName) {
     List<Lost> dongs = lostRepository.findLocationByDong(dongName);
-    return LocationDTO.LocationListResponseDTO.builder()
-            .result(dongs.stream().map(lost -> LocationDTO.LocationResponseDTO.builder()
-                            .id(lost.getId())
-                            .title(lost.getTitle())
-                            .createdAt(lost.getCreatedAt())
-                            .imageUrl(lost.getImageUrl())
-                            .build())
-                    .collect(Collectors.toList()))
-            .build();
+    return LocationConverter.toLocationList(dongs);
   }
 
   public ShopDTO.ShopListResponseDTO findByShop(String shopName) {
     List<Lost> shops = lostRepository.findLostByShopName(shopName);
-
-
-    return ShopDTO.ShopListResponseDTO.builder()
-            .result(shops.stream().map(shop -> ShopDTO.ShopResponseDTO.builder()
-                            .id(shop.getId())
-                            .title(shop.getTitle())
-                            .shopName(shopName)
-                            .createdAt(shop.getCreatedAt())
-                            .imageUrl(shop.getX() + " " + shop.getY())
-                            .build())
-                    .collect(Collectors.toList()))
-            .build();
+    return ShopConverter.toShopList(shops);
   }
 
   /*public FindByDongListResponseDto findByCurrentLocation(Double x, Double y) {
@@ -116,33 +92,9 @@ public class LostService {
             Member member = memberRepositoryByEmail.get();
             Location location = locationByDong.get();
             Category category = categoryByName.get();
-            Lost lost = Lost.builder()
-                    .title(lostRegisterRequestDto.getTitle())
-                    .content(lostRegisterRequestDto.getContent())
-                    .x(lostRegisterRequestDto.getX())
-                    .y(lostRegisterRequestDto.getY())
-                    .foundDate(localDate)
-                    .imageUrl(imageUrl)
-                    .createdAt(LocalDateTime.now())
-                    .category(category)
-                    .location(location)
-                    .member(member)
-                    .build();
+            Lost lost = LostConverter.toLost(lostRegisterRequestDto,localDate,imageUrl,category,location,member);
             Lost save = lostRepository.save(lost);
-            return LostDTO.LostRegisterResponseDto.builder()
-                    .title(lost.getTitle())
-                    .content(lost.getContent())
-                    .x(lost.getX())
-                    .y(lost.getY())
-                    .foundDate(lost.getFoundDate())
-                    .createdAt(lost.getCreatedAt())
-                    .image(lost.getImageUrl())
-                    .category(lost.getCategory().getName())
-                    .memberId(lost.getMember().getId())
-                    .dong(location.getDong())
-                    .lostId(lost.getId())
-                    .build();
-
+            return LostConverter.toLostRegister(save);
         }
         return LostDTO.LostRegisterResponseDto.builder()
                 .build();
@@ -216,19 +168,8 @@ public class LostService {
     Lost updatedLost = lostRepository.save(lost);
 
     if (updatedLost != null) {
-      return LostDTO.LostUpdateResponseDto.builder()
-              .lostId(updatedLost.getId())
-              .memberId(updatedLost.getMember().getId())
-              .title(updatedLost.getTitle())
-              .image(updatedLost.getImageUrl())
-              .createdAt(updatedLost.getCreatedAt())
-              .content(updatedLost.getContent())
-              .x(updatedLost.getX())
-              .y(updatedLost.getY())
-              .dong(updatedLost.getLocation().getDong())
-              .category(updatedLost.getCategory().getName())
-              .foundDate(updatedLost.getFoundDate())
-              .build();
+        return LostConverter.toLostUpdate(updatedLost);
+
     } else {
       return LostDTO.LostUpdateResponseDto.builder()
               .build();
