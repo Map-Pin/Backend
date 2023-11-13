@@ -1,9 +1,9 @@
 package com.server.mappin.controller;
 
-import com.server.mappin.dto.AdminLoginResponseDto;
-import com.server.mappin.dto.LoginResponseDto;
-import com.server.mappin.dto.UserLoginResponseDto;
-import com.server.mappin.dto.MemberLoginDto;
+import com.server.mappin.dto.Login.AdminLoginResponseDto;
+import com.server.mappin.dto.Login.LoginResponseDto;
+import com.server.mappin.dto.Login.MemberLoginDto;
+import com.server.mappin.dto.Login.UserLoginResponseDto;
 import com.server.mappin.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
