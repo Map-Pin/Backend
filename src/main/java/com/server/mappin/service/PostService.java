@@ -4,7 +4,7 @@ import com.server.mappin.domain.Category;
 import com.server.mappin.domain.Location;
 import com.server.mappin.domain.Member;
 import com.server.mappin.domain.Post;
-import com.server.mappin.dto.*;
+import com.server.mappin.dto.Post.*;
 import com.server.mappin.repository.CategoryRepository;
 import com.server.mappin.repository.LocationRepository;
 import com.server.mappin.repository.MemberRepository;
@@ -35,7 +35,7 @@ public class PostService {
 
 
   @Transactional
-  public PostCreateResponseDto create(PostCreateRequestDto postCreateRequestDto, MultipartFile image, String email) throws IOException {
+  public PostDTO.PostCreateResponseDto create(PostDTO.PostCreateRequestDto postCreateRequestDto, MultipartFile image, String email) throws IOException {
     //String date -> LocalDate로 변경
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     LocalDate localDate = LocalDate.parse(postCreateRequestDto.getLostDate(),formatter);
@@ -67,9 +67,7 @@ public class PostService {
 
       Post save = postRepository.save(post);
       log.info(save.getTitle());
-      return PostCreateResponseDto.builder()
-              .statusCode(200)
-              .isSuccess("true")
+      return PostDTO.PostCreateResponseDto.builder()
               .title(save.getTitle())
               .postId(save.getId())
               .memberId(member.getId())
@@ -84,28 +82,20 @@ public class PostService {
               .build();
 
     }
-    return PostCreateResponseDto.builder()
-            .statusCode(400)
-            .isSuccess("false")
-            .build();
+    return PostDTO.PostCreateResponseDto.builder().build();
   }
 
   @Transactional
-  public PostUpdateResponseDto update(Long postId, PostUpdateRequestDto postUpdateRequestDto, MultipartFile image, String email) throws IOException {
+  public PostDTO.PostUpdateResponseDto update(Long postId, PostDTO.PostUpdateRequestDto postUpdateRequestDto, MultipartFile image, String email) throws IOException {
     Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("해당 아이디가 존재하지 않습니다"));
 
     Optional<Member> member = memberRepository.findByEmail(email);
     if(member.isEmpty()){
-      return PostUpdateResponseDto.builder()
-              .statusCode(400)
-              .isSuccess("false")
+      return PostDTO.PostUpdateResponseDto.builder()
               .build();
     }
     else if(!member.get().getId().equals(post.getMember().getId())){
-      return PostUpdateResponseDto.builder()
-              .statusCode(400)
-              .isSuccess("false")
-              .build();
+      return PostDTO.PostUpdateResponseDto.builder().build();
     }
 
     // 업데이트 필드를 확인하고 필요한 경우 업데이트
@@ -147,10 +137,10 @@ public class PostService {
     Post updatedPost = postRepository.save(post);
 
     if (updatedPost != null) {
-      return PostUpdateResponseDto.builder()
-              .statusCode(200)
-              .isSuccess("true")
+      return PostDTO.PostUpdateResponseDto.builder()
               .postId(updatedPost.getId())
+              .memberId(updatedPost.getMember().getId())
+              .title(updatedPost.getTitle())
               .image(updatedPost.getImageUrl())
               .createdAt(updatedPost.getCreatedAt())
               .content(updatedPost.getContent())
@@ -161,21 +151,17 @@ public class PostService {
               .lostDate(updatedPost.getLostDate())
               .build();
     } else {
-      return PostUpdateResponseDto.builder()
-              .statusCode(400)
-              .isSuccess("false")
+      return PostDTO.PostUpdateResponseDto.builder()
               .build();
     }
   }
 
 
 
-  public PostSearchResponseDto search(Long id){
+  public PostDTO.PostSearchResponseDto search(Long id){
     Optional<Post> postRepositoryById = postRepository.findById(id);
     return postRepositoryById
-            .map(post -> PostSearchResponseDto.builder()
-                    .statusCode(200)
-                    .isSuccess("true")
+            .map(post -> PostDTO.PostSearchResponseDto.builder()
                     .title(post.getTitle())
                     .image(post.getImageUrl())
                     .lostDate(post.getLostDate())
@@ -186,9 +172,7 @@ public class PostService {
                     .dong(post.getLocation().getDong())
                     .content(post.getContent())
                     .build())
-            .orElse(PostSearchResponseDto.builder()
-                    .statusCode(400)
-                    .isSuccess("false")
+            .orElse(PostDTO.PostSearchResponseDto.builder()
                     .build());
 
   }

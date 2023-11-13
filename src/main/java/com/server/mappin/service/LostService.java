@@ -1,10 +1,12 @@
 package com.server.mappin.service;
 
 import com.server.mappin.domain.*;
-import com.server.mappin.dto.*;
+import com.server.mappin.dto.Category.CategoryDTO;
+import com.server.mappin.dto.Location.LocationDTO;
+import com.server.mappin.dto.Lost.*;
+import com.server.mappin.dto.Shop.ShopDTO;
 import com.server.mappin.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,13 +30,11 @@ public class LostService {
     private final MapService mapService;
     private final S3Service s3Service;
 
-  public FindByCategoryListResponseDto findByCategory(String categoryName) {
+  public CategoryDTO.CategoryListResponseDTO findByCategory(String categoryName) {
     List<Lost> losts = lostRepository.findByCategory(categoryName);
 
-    return FindByCategoryListResponseDto.builder()
-            .statusCode(200)
-            .isSuccess("true")
-            .losts(losts.stream().map(lost -> FindByCategoryResponseDto.builder()
+    return CategoryDTO.CategoryListResponseDTO.builder()
+            .result(losts.stream().map(lost -> CategoryDTO.CategoryResponseDTO.builder()
                     .id(lost.getId())
                     .title(lost.getTitle())
                     .creatdAt(lost.getCreatedAt())
@@ -44,12 +44,10 @@ public class LostService {
             .build();
   }
 
-  public FindByDongListResponseDto findByDong(String dongName) {
+  public LocationDTO.LocationListResponseDTO findByDong(String dongName) {
     List<Lost> dongs = lostRepository.findLocationByDong(dongName);
-    return FindByDongListResponseDto.builder()
-            .statusCode(200)
-            .isSuccess("true")
-            .losts(dongs.stream().map(lost -> FindByDongResponseDto.builder()
+    return LocationDTO.LocationListResponseDTO.builder()
+            .result(dongs.stream().map(lost -> LocationDTO.LocationResponseDTO.builder()
                             .id(lost.getId())
                             .title(lost.getTitle())
                             .createdAt(lost.getCreatedAt())
@@ -59,17 +57,17 @@ public class LostService {
             .build();
   }
 
-  public FindByShopListResponseDto findByShop(String shopName) {
+  public ShopDTO.ShopListResponseDTO findByShop(String shopName) {
     List<Lost> shops = lostRepository.findLostByShopName(shopName);
-    return FindByShopListResponseDto.builder()
-            .statusCode(200)
-            .isSuccess("true")
-            .losts(shops.stream().map(lost -> FindByShopResponseDto.builder()
-                            .id(lost.getId())
-                            .title(lost.getTitle())
-                            .createdAt(lost.getCreatedAt())
-                            .imageUrl(lost.getImageUrl())
+
+
+    return ShopDTO.ShopListResponseDTO.builder()
+            .result(shops.stream().map(shop -> ShopDTO.ShopResponseDTO.builder()
+                            .id(shop.getId())
+                            .title(shop.getTitle())
                             .shopName(shopName)
+                            .createdAt(shop.getCreatedAt())
+                            .imageUrl(shop.getX() + " " + shop.getY())
                             .build())
                     .collect(Collectors.toList()))
             .build();
@@ -86,12 +84,10 @@ public class LostService {
   }
   */
 
-  public FindByDongListResponseDto findByCurrentLocation(Double x, Double y) {
+  public LocationDTO.LocationListResponseDTO findByCurrentLocation(Double x, Double y) {
     List<Lost> locationByDong = lostRepository.findAll();
-    return FindByDongListResponseDto.builder()
-            .statusCode(200)
-            .isSuccess("true")
-            .losts(locationByDong.stream().map(lost -> FindByDongResponseDto.builder()
+    return LocationDTO.LocationListResponseDTO.builder()
+            .result(locationByDong.stream().map(lost -> LocationDTO.LocationResponseDTO.builder()
                             .id(lost.getId())
                             .title(lost.getTitle())
                             .createdAt(lost.getCreatedAt())
@@ -104,7 +100,7 @@ public class LostService {
 
 
     @Transactional
-    public LostRegisterResponseDto registerLost(LostRegisterRequestDto lostRegisterRequestDto, MultipartFile image, String email) throws IOException {
+    public LostDTO.LostRegisterResponseDto registerLost(LostDTO.LostRegisterRequestDto lostRegisterRequestDto, MultipartFile image, String email) throws IOException {
         //String으로 받아온 yyyy-MM-dd를 LocalDate 형식으로 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(lostRegisterRequestDto.getFoundDate(),formatter);
@@ -133,9 +129,7 @@ public class LostService {
                     .member(member)
                     .build();
             Lost save = lostRepository.save(lost);
-            return LostRegisterResponseDto.builder()
-                    .statusCode(200)
-                    .isSuccess("true")
+            return LostDTO.LostRegisterResponseDto.builder()
                     .title(lost.getTitle())
                     .content(lost.getContent())
                     .x(lost.getX())
@@ -150,19 +144,15 @@ public class LostService {
                     .build();
 
         }
-        return LostRegisterResponseDto.builder()
-                .statusCode(400)
-                .isSuccess("false")
+        return LostDTO.LostRegisterResponseDto.builder()
                 .build();
 
     }
 
-    public LostSearchByIdResponseDto getById(Long id){
+    public LostDTO.LostSearchByIdResponseDto getById(Long id){
         Optional<Lost> lostById = lostRepository.findById(id);
         return lostById
-                .map(lost -> LostSearchByIdResponseDto.builder()
-                        .statusCode(200)
-                        .isSuccess("true")
+                .map(lost -> LostDTO.LostSearchByIdResponseDto.builder()
                         .title(lost.getTitle())
                         .content(lost.getContent())
                         .x(lost.getX())
@@ -173,26 +163,15 @@ public class LostService {
                         .createdAt(lost.getCreatedAt())
                         .image(lost.getImageUrl())
                         .build())
-                .orElse(LostSearchByIdResponseDto.builder()
-                        .statusCode(400)
-                        .isSuccess("false")
+                .orElse(LostDTO.LostSearchByIdResponseDto.builder()
                         .build());
     }
     @Transactional
-  public LostUpdateResponseDto update(Long lostId, LostUpdateRequestDto lostUpdateRequestDto, MultipartFile image, String email) throws IOException {
+  public LostDTO.LostUpdateResponseDto update(Long lostId, LostDTO.LostUpdateRequestDto lostUpdateRequestDto, MultipartFile image, String email) throws IOException {
     Lost lost = lostRepository.findById(lostId).orElseThrow(() -> new NullPointerException("해당 아이디가 존재하지 않습니다"));
     Optional<Member> member = memberRepository.findByEmail(email);
     if(member.isEmpty()){
-      return LostUpdateResponseDto.builder()
-              .statusCode(400)
-              .isSuccess("false")
-              .build();
-    }
-    else if(!member.get().getId().equals(lost.getMember().getId())){
-      return LostUpdateResponseDto.builder()
-              .statusCode(400)
-              .isSuccess("false")
-              .build();
+      return LostDTO.LostUpdateResponseDto.builder().build();
     }
     System.out.println("member = " + member.get().getName());
 
@@ -219,6 +198,7 @@ public class LostService {
     }
 
     if (lostUpdateRequestDto.getTitle() != null) {
+      System.out.println("LOST = " + lostUpdateRequestDto.getTitle());
       lost.setTitle(lostUpdateRequestDto.getTitle());
     }
 
@@ -231,14 +211,15 @@ public class LostService {
       lost.setImageUrl(imageUrl);
     }
 
+    System.out.println("lost title: " + lost.getTitle());
     // 게시물 업데이트
     Lost updatedLost = lostRepository.save(lost);
 
     if (updatedLost != null) {
-      return LostUpdateResponseDto.builder()
-              .statusCode(200)
-              .isSuccess("true")
+      return LostDTO.LostUpdateResponseDto.builder()
               .lostId(updatedLost.getId())
+              .memberId(updatedLost.getMember().getId())
+              .title(updatedLost.getTitle())
               .image(updatedLost.getImageUrl())
               .createdAt(updatedLost.getCreatedAt())
               .content(updatedLost.getContent())
@@ -249,9 +230,7 @@ public class LostService {
               .foundDate(updatedLost.getFoundDate())
               .build();
     } else {
-      return LostUpdateResponseDto.builder()
-              .statusCode(400)
-              .isSuccess("false")
+      return LostDTO.LostUpdateResponseDto.builder()
               .build();
     }
   }

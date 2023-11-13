@@ -120,6 +120,7 @@ jobs:
             
             # Docker Compose 실행
             sudo docker-compose up -d
+            sudo docker-compose logs -f
             
             # 사용하지 않는 Docker 이미지 정리
             sudo docker image prune -f
