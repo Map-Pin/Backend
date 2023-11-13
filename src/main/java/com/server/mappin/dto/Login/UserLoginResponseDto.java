@@ -1,8 +1,7 @@
-package com.server.mappin.dto;
+package com.server.mappin.dto.Login;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 @Builder

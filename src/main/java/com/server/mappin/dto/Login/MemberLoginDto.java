@@ -1,4 +1,4 @@
-package com.server.mappin.dto;
+package com.server.mappin.dto.Login;
 
 import com.server.mappin.domain.enums.Role;
 import lombok.Data;
