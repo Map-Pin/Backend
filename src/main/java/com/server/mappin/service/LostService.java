@@ -46,7 +46,7 @@ public class LostService {
 
   public ShopDTO.ShopListResponseDTO findByShop(String shopName) {
     List<Lost> shops = lostRepository.findLostByShopName(shopName);
-    return ShopConverter.toShopList(shops);
+    return ShopConverter.toShopListResponse(shops);
   }
 
   /*public FindByDongListResponseDto findByCurrentLocation(Double x, Double y) {

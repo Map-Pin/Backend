@@ -1,5 +1,6 @@
 package com.server.mappin.service;
 
+import com.server.mappin.converter.PostConverter;
 import com.server.mappin.domain.Category;
 import com.server.mappin.domain.Location;
 import com.server.mappin.domain.Member;
@@ -52,35 +53,11 @@ public class PostService {
       location = locationByDong.get();
       category = categoryByName.get();
       member = memberByEmail.get();
-      Post post = Post.builder()
-              .member(member)
-              .category(category)
-              .location(location)
-              .title(postCreateRequestDto.getTitle())
-              .x(postCreateRequestDto.getX())
-              .y(postCreateRequestDto.getY())
-              .lostDate(localDate)
-              .createdAt(LocalDateTime.now())
-              .content(postCreateRequestDto.getContent())
-              .imageUrl(imageUrl)
-              .build();
+      Post post = PostConverter.toPost(postCreateRequestDto,member,location,category,localDate,imageUrl);
 
       Post save = postRepository.save(post);
       log.info(save.getTitle());
-      return PostDTO.PostCreateResponseDto.builder()
-              .title(save.getTitle())
-              .postId(save.getId())
-              .memberId(member.getId())
-              .image(imageUrl)
-              .createdAt(post.getCreatedAt())
-              .content(post.getContent())
-              .x(post.getX())
-              .y(post.getY())
-              .dong(post.getLocation().getDong())
-              .category(post.getCategory().getName())
-              .lostDate(post.getLostDate())
-              .build();
-
+      return PostConverter.toPostCreate(save);
     }
     return PostDTO.PostCreateResponseDto.builder().build();
   }
@@ -137,19 +114,7 @@ public class PostService {
     Post updatedPost = postRepository.save(post);
 
     if (updatedPost != null) {
-      return PostDTO.PostUpdateResponseDto.builder()
-              .postId(updatedPost.getId())
-              .memberId(updatedPost.getMember().getId())
-              .title(updatedPost.getTitle())
-              .image(updatedPost.getImageUrl())
-              .createdAt(updatedPost.getCreatedAt())
-              .content(updatedPost.getContent())
-              .x(updatedPost.getX())
-              .y(updatedPost.getY())
-              .dong(updatedPost.getLocation().getDong())
-              .category(updatedPost.getCategory().getName())
-              .lostDate(updatedPost.getLostDate())
-              .build();
+      return PostConverter.toPostUpdate(updatedPost);
     } else {
       return PostDTO.PostUpdateResponseDto.builder()
               .build();

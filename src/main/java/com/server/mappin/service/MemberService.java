@@ -1,6 +1,7 @@
 package com.server.mappin.service;
 
 import com.server.mappin.auth.token.TokenProvider;
+import com.server.mappin.converter.MemberConverter;
 import com.server.mappin.domain.Member;
 import com.server.mappin.domain.Shop;
 import com.server.mappin.domain.enums.ProviderType;
@@ -39,12 +40,7 @@ public class MemberService {
         if (existingMember.isPresent()) {
             save = existingMember.get();
         } else {
-            Member member = new Member();
-            member.setEmail(memberCreateDto.getEmail());
-            member.setRole(Role.USER);
-            member.setName(memberCreateDto.getName());
-            member.setCreatedAt(LocalDate.now());
-            member.setProviderType(ProviderType.KAKAO);
+            Member member = MemberConverter.toMember(memberCreateDto);
             save = memberRepository.save(member);
         }
         jwt = tokenProvider.generateToken(save.getEmail(), save.getRole().toString());
@@ -53,27 +49,11 @@ public class MemberService {
             if(byMember.isPresent()){
                 Shop shop = byMember.get();
                 Point point = mapService.GetLocalInfo(shop.getAddress());
-                return AdminLoginResponseDto.builder()
-                        .statusCode(201)
-                        .isSuccess("true")
-                        .id(save.getId())
-                        .jwt(jwt)
-                        .token_type("Bearer")
-                        .expires_in(accessTokenValidityInMilliseconds)
-                        .role(save.getRole().name())
-                        .geo(point)
-                        .build();
+
+                return MemberConverter.toAdminLogin(save,jwt,point,accessTokenValidityInMilliseconds);
             }
         }
-        return UserLoginResponseDto.builder()
-                .statusCode(200)
-                .isSuccess("true")
-                .id(save.getId())
-                .role(save.getRole().name())
-                .jwt(jwt)
-                .token_type("Bearer")
-                .expires_in(accessTokenValidityInMilliseconds)
-                .build();
+        return MemberConverter.toUserLogin(save,jwt,accessTokenValidityInMilliseconds);
 
     }
 }
