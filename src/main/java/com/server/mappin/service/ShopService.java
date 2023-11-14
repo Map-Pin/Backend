@@ -1,5 +1,6 @@
 package com.server.mappin.service;
 
+import com.server.mappin.converter.ShopConverter;
 import com.server.mappin.domain.Location;
 import com.server.mappin.domain.Member;
 import com.server.mappin.domain.Shop;
@@ -46,14 +47,7 @@ public class ShopService {
               .build();
       Member save1 = memberRepository.save(member);
       Shop save = shopRepository.save(shop);
-      return ShopDTO.ShopRegisterResponseDto.builder()
-                .id(save.getId())
-                .memberId(save1.getId())
-                .name(save.getName())
-                .address(save.getAddress())
-                .dong(dong)
-                .companyNumber(save.getCompanyNumber())
-                .build();
+      return ShopConverter.toShopRegisterResponse(save,dong);
     }
     return ShopDTO.ShopRegisterResponseDto.builder()
             .build();

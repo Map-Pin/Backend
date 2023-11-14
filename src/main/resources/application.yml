@@ -59,6 +59,10 @@ spring:
   kakao:
     api:
       key: ${KAKAO_REST_API_KEY}
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
 #  mvc:
 #    pathmatch:
