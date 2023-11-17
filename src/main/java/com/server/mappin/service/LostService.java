@@ -125,8 +125,6 @@ public class LostService {
     if(member.isEmpty()){
       return LostDTO.LostUpdateResponseDto.builder().build();
     }
-    System.out.println("member = " + member.get().getName());
-
     // 업데이트 필드를 확인하고 필요한 경우 업데이트
     if (lostUpdateRequestDto.getFoundDate() != null) {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -162,8 +160,6 @@ public class LostService {
       String imageUrl = s3Service.upload(image, "images");
       lost.setImageUrl(imageUrl);
     }
-
-    System.out.println("lost title: " + lost.getTitle());
     // 게시물 업데이트
     Lost updatedLost = lostRepository.save(lost);
 
