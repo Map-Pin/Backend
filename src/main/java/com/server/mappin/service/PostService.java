@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -193,4 +195,20 @@ public class PostService {
 
   }
 
+  public PostSearchAllListResponseDto searchAll(){
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    List<Post> posts = postRepository.findAll();
+    return PostSearchAllListResponseDto.builder()
+            .statusCode(200)
+            .isSuccess("true")
+            .posts(posts.stream().map(post -> PostSearchAllResponseDto.builder()
+                            .id(post.getId())
+                            .title(post.getTitle())
+                            .image(post.getImageUrl())
+                            .createdAt(post.getCreatedAt().format(formatter))
+                            .dong(post.getLocation().getDong())
+                            .build())
+                    .collect(Collectors.toList()))
+            .build();
+  }
 }

@@ -69,7 +69,7 @@ public class PostController {
         }
     }
 
-    @Operation(summary = "게시물 조회",description = "게시물 Id로 게시물을 상세 조회")
+    @Operation(summary = "게시물 상세 조회",description = "게시물 Id로 게시물을 상세 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "200",description = "게시물 조회 성공",content = @Content(schema = @Schema(implementation = PostSearchResponseDto.class))),
             @ApiResponse(responseCode = "400",description = "게시물 조회 실패",content = @Content(schema = @Schema(implementation = PostCreateResponseDto.class)))
@@ -79,6 +79,18 @@ public class PostController {
         try{
             PostSearchResponseDto search = postService.search(id);
             return new ResponseEntity<>(search,HttpStatus.OK);
+        }catch (IllegalStateException e){
+            return new ResponseEntity<>("에러가 발생했습니다",HttpStatus.CONFLICT);
+        }
+    }
+
+    @Operation(summary = "게시물 전체 조회",description = "게시물 전체를 조회합니다")
+    @ApiResponse(responseCode = "200",description = "게시물 전체 조회 성공",content = @Content(schema=@Schema(implementation = PostSearchAllListResponseDto.class)))
+    @GetMapping("/post/serach/all")
+    public ResponseEntity<?> searchAll(){
+        try{
+            PostSearchAllListResponseDto postSearchAllListResponseDto = postService.searchAll();
+            return new ResponseEntity<>(postSearchAllListResponseDto,HttpStatus.OK);
         }catch (IllegalStateException e){
             return new ResponseEntity<>("에러가 발생했습니다",HttpStatus.CONFLICT);
         }
