@@ -13,4 +13,5 @@ public class FindByCategoryResponseDto {
     private String title;
     private LocalDateTime creatdAt;
     private String imageUrl;
+    private String dong;
 }
