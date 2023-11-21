@@ -13,4 +13,5 @@ public class FindByShopResponseDto {
   private LocalDateTime createdAt;
   private String imageUrl;
   private String shopName;
+  private String dong;
 }
