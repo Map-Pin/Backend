@@ -86,7 +86,7 @@ public class PostController {
 
     @Operation(summary = "게시물 전체 조회",description = "게시물 전체를 조회합니다")
     @ApiResponse(responseCode = "200",description = "게시물 전체 조회 성공",content = @Content(schema=@Schema(implementation = PostSearchAllListResponseDto.class)))
-    @GetMapping("/post/serach/all")
+    @GetMapping("/post/search/all")
     public ResponseEntity<?> searchAll(){
         try{
             PostSearchAllListResponseDto postSearchAllListResponseDto = postService.searchAll();
