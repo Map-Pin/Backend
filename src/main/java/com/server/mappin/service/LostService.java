@@ -37,7 +37,7 @@ public class LostService {
             .losts(losts.stream().map(lost -> FindByCategoryResponseDto.builder()
                     .id(lost.getId())
                     .title(lost.getTitle())
-                    .creatdAt(lost.getCreatedAt())
+                    .createdAt(lost.getCreatedAt())
                     .imageUrl(lost.getImageUrl())
                             .dong(lost.getLocation().getDong())
                     .build())

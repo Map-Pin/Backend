@@ -11,7 +11,7 @@ import java.util.List;
 public class FindByCategoryResponseDto {
     private Long id;
     private String title;
-    private LocalDateTime creatdAt;
+    private LocalDateTime createdAt;
     private String imageUrl;
     private String dong;
 }
