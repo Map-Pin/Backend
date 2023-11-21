@@ -54,6 +54,7 @@ public class LostService {
                             .title(lost.getTitle())
                             .createdAt(lost.getCreatedAt())
                             .imageUrl(lost.getImageUrl())
+                            .dong(dongName)
                             .build())
                     .collect(Collectors.toList()))
             .build();
@@ -96,6 +97,7 @@ public class LostService {
                             .title(lost.getTitle())
                             .createdAt(lost.getCreatedAt())
                             .imageUrl(lost.getImageUrl())
+                            .dong(lost.getLocation().getDong())
                             .build())
                     .collect(Collectors.toList()))
             .build();
