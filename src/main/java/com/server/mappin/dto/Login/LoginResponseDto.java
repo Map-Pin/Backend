@@ -1,4 +1,4 @@
-package com.server.mappin.dto;
+package com.server.mappin.dto.Login;
 
 public interface LoginResponseDto {
     int getStatusCode();
