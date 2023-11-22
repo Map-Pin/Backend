@@ -120,6 +120,9 @@ public class LostService {
         Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
         //이미지 S3에 업로드
         String imageUrl = s3Service.upload(image, "images");
+        System.out.println("memberRepositoryByEmail = " + memberRepositoryByEmail);
+        System.out.println("dong = " + locationByDong);
+        System.out.println("categoryByName = " + categoryByName);
         if(memberRepositoryByEmail.isPresent() && categoryByName.isPresent() && locationByDong.isPresent()){
             Member member = memberRepositoryByEmail.get();
             Location location = locationByDong.get();
