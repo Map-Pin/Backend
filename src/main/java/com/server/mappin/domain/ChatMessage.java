@@ -1,10 +1,8 @@
 package com.server.mappin.domain;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -24,7 +22,13 @@ public class ChatMessage {
   //채팅방 ID
   private String roomId;
   //보내는 사람
-  private String sender;
+  @ManyToOne
+  @JoinColumn(name = "member_id")
+  private Member member;
   //내용
   private String message;
+
+  @Column(name = "created_at")
+  private LocalDateTime createdAt;
+
 }
