@@ -26,14 +26,14 @@ public class ShopController {
   private final ShopService shopService;
 
   @Operation(summary = "가게 등록", description = "application/json입니다")
-  @ApiResponse(content = @Content(schema = @Schema(implementation = ShopDTO.ShopRegisterResponseDto.class)))
+  @ApiResponse(content = @Content(schema = @Schema(implementation = ShopDTO.ShopRegisterRP.class)))
   @PutMapping(value = "/shop/register")
   public ResponseEntity<?> registerLost(
-          @RequestBody ShopDTO.ShopRegisterRequestDto shopRegisterRequestDto,
+          @RequestBody ShopDTO.ShopRegisterRQ shopRegisterRQ,
           Authentication authentication) throws IOException {
     try {
-      ShopDTO.ShopRegisterResponseDto shopRegisterResponseDto = shopService.shopRegister(shopRegisterRequestDto, authentication.getName());
-      return new ResponseEntity<>(shopRegisterResponseDto, HttpStatus.OK);
+      ShopDTO.ShopRegisterRP shopRegisterRP = shopService.shopRegister(shopRegisterRQ, authentication.getName());
+      return new ResponseEntity<>(shopRegisterRP, HttpStatus.OK);
     } catch (IllegalStateException e) {
       return new ResponseEntity<>("에러가 발생했습니다", HttpStatus.CONFLICT);
     }
