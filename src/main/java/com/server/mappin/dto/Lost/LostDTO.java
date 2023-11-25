@@ -10,7 +10,7 @@ public class LostDTO {
 
   @Data
   @Builder
-  public static class LostRegisterResponseDto {
+  public static class LostRegisterRP {
     private Long memberId;
     private Long lostId;
     private String title;
@@ -25,7 +25,7 @@ public class LostDTO {
   }
 
   @Data
-  public static class LostRegisterRequestDto {
+  public static class LostRegisterRQ {
     private String title;
     private String content;
     private String foundDate;
@@ -37,7 +37,7 @@ public class LostDTO {
 
   @Builder
   @Data
-  public static class LostSearchByIdResponseDto {
+  public static class LostSearchByIdRP {
     private String title;
     private String content;
     private LocalDate foundDate;
@@ -50,7 +50,7 @@ public class LostDTO {
   }
 
   @Data
-  public static class LostUpdateRequestDto {
+  public static class LostUpdateRQ {
     private String title;
     private String content;
     private String foundDate;
@@ -62,7 +62,7 @@ public class LostDTO {
 
   @Data
   @Builder
-  public static class LostUpdateResponseDto {
+  public static class LostUpdateRP {
     private Long memberId;
     private Long lostId;
     private String title;
