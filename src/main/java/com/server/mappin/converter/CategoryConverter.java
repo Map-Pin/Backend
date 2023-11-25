@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 public class CategoryConverter {
 
-    public static CategoryDTO.CategoryListResponseDTO toCategoryList(List<Lost> losts){
-        return CategoryDTO.CategoryListResponseDTO.builder()
-                .result(losts.stream().map(lost -> CategoryDTO.CategoryResponseDTO.builder()
+    public static CategoryDTO.CategoryListRP toCategoryList(List<Lost> losts){
+        return CategoryDTO.CategoryListRP.builder()
+                .result(losts.stream().map(lost -> CategoryDTO.CategoryRP.builder()
                                 .id(lost.getId())
                                 .title(lost.getTitle())
                                 .creatdAt(lost.getCreatedAt())

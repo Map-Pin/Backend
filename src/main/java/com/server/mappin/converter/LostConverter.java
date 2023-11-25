@@ -15,10 +15,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class LostConverter {
 
-
-
-    public static LostDTO.LostRegisterResponseDto toLostRegister(Lost lost){
-        return LostDTO.LostRegisterResponseDto.builder()
+    public static LostDTO.LostRegisterRP toLostRegisterRP(Lost lost){
+        return LostDTO.LostRegisterRP.builder()
                 .title(lost.getTitle())
                 .content(lost.getContent())
                 .x(lost.getX())
@@ -34,17 +32,17 @@ public class LostConverter {
     }
 
     public static Lost toLost(
-            LostDTO.LostRegisterRequestDto lostRegisterRequestDto,
+            LostDTO.LostRegisterRQ lostRegisterRQ,
             LocalDate localDate,
             String imageUrl,
             Category category,
             Location location,
             Member member){
         return Lost.builder()
-                .title(lostRegisterRequestDto.getTitle())
-                .content(lostRegisterRequestDto.getContent())
-                .x(lostRegisterRequestDto.getX())
-                .y(lostRegisterRequestDto.getY())
+                .title(lostRegisterRQ.getTitle())
+                .content(lostRegisterRQ.getContent())
+                .x(lostRegisterRQ.getX())
+                .y(lostRegisterRQ.getY())
                 .foundDate(localDate)
                 .imageUrl(imageUrl)
                 .createdAt(LocalDateTime.now())
@@ -54,8 +52,8 @@ public class LostConverter {
                 .build();
     }
 
-    public static LostDTO.LostUpdateResponseDto toLostUpdate(Lost lost){
-        return LostDTO.LostUpdateResponseDto.builder()
+    public static LostDTO.LostUpdateRP toLostUpdateRP(Lost lost){
+        return LostDTO.LostUpdateRP.builder()
                 .lostId(lost.getId())
                 .memberId(lost.getMember().getId())
                 .title(lost.getTitle())
