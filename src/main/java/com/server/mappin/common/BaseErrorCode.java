@@ -2,5 +2,7 @@ package com.server.mappin.common;
 
 
 public interface BaseErrorCode {
-    public ErrorReasonDto getReason();
+    ErrorReasonDto getReason();
+
+    ErrorReasonDto getReasonHttpStatus();
 }

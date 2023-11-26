@@ -34,7 +34,17 @@ public enum ErrorStatus implements BaseErrorCode {
         return ErrorReasonDto.builder()
                 .message(message)
                 .code(code)
-                .isSuccess(false)
+                .success(false)
+                .build();
+    }
+
+    @Override
+    public ErrorReasonDto getReasonHttpStatus(){
+        return ErrorReasonDto.builder()
+                .httpStatus(httpStatus)
+                .message(message)
+                .code(code)
+                .success(false)
                 .build();
     }
 }
