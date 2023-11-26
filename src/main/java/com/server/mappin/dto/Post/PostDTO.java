@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class PostDTO {
   @Data
-  public static class PostCreateRequestDto {
+  public static class PostCreateRQ {
     private String title;
     private String content;
     private String lostDate;
@@ -20,7 +20,7 @@ public class PostDTO {
 
   @Data
   @Builder
-  public static class PostCreateResponseDto {
+  public static class PostCreateRP {
     private Long memberId;
     private Long postId;
     private String title;
@@ -36,7 +36,7 @@ public class PostDTO {
 
   @Builder
   @Data
-  public static class PostSearchResponseDto {
+  public static class PostSearchRP {
     private String title;
     private String content;
     private LocalDate lostDate;
@@ -49,7 +49,7 @@ public class PostDTO {
   }
 
   @Data
-  public static class PostUpdateRequestDto {
+  public static class PostUpdateRQ {
     private String title;
     private String content;
     private String lostDate;
@@ -59,7 +59,7 @@ public class PostDTO {
   }
   @Data
   @Builder
-  public static class PostUpdateResponseDto {
+  public static class PostUpdateRP {
     private Long memberId;
     private Long postId;
     private String title;

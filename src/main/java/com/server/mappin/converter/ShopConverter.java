@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ShopConverter {
 
-    public static ShopDTO.ShopListResponseDTO toShopListResponse(List<Lost> losts){
-        return ShopDTO.ShopListResponseDTO.builder()
-                .result(losts.stream().map(shop -> ShopDTO.ShopResponseDTO.builder()
+    public static ShopDTO.ShopListRP toShopListResponse(List<Lost> losts){
+        return ShopDTO.ShopListRP.builder()
+                .result(losts.stream().map(shop -> ShopDTO.ShopRP.builder()
                                 .id(shop.getId())
                                 .title(shop.getTitle())
                                 .shopName(shop.getTitle())
@@ -28,19 +28,19 @@ public class ShopConverter {
                 .build();
     }
 
-    public static Shop toShop(Member member, ShopDTO.ShopRegisterRequestDto shopRegisterRequestDto, Location location){
+    public static Shop toShop(Member member, ShopDTO.ShopRegisterRQ shopRegisterRQ, Location location){
         return Shop.builder()
                 .member(member)
-                .name(shopRegisterRequestDto.getName())
-                .address(shopRegisterRequestDto.getAddress())
+                .name(shopRegisterRQ.getName())
+                .address(shopRegisterRQ.getAddress())
                 .location(location)
                 .point(50)
-                .companyNumber(shopRegisterRequestDto.getCompanyNumber())
+                .companyNumber(shopRegisterRQ.getCompanyNumber())
                 .build();
     }
 
-    public static ShopDTO.ShopRegisterResponseDto toShopRegisterResponse(Shop shop, String dong){
-        return ShopDTO.ShopRegisterResponseDto.builder()
+    public static ShopDTO.ShopRegisterRP toShopRegisterResponse(Shop shop, String dong){
+        return ShopDTO.ShopRegisterRP.builder()
                 .id(shop.getId())
                 .memberId(shop.getMember().getId())
                 .name(shop.getName())

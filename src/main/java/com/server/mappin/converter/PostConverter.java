@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PostConverter {
 
-    public static Post toPost(PostDTO.PostCreateRequestDto postCreateRequestDto,
+    public static Post toPost(PostDTO.PostCreateRQ postCreateRQ,
                               Member member,
                               Location location,
                               Category category,
@@ -25,18 +25,18 @@ public class PostConverter {
                 .member(member)
                 .category(category)
                 .location(location)
-                .title(postCreateRequestDto.getTitle())
-                .x(postCreateRequestDto.getX())
-                .y(postCreateRequestDto.getY())
+                .title(postCreateRQ.getTitle())
+                .x(postCreateRQ.getX())
+                .y(postCreateRQ.getY())
                 .lostDate(localDate)
                 .createdAt(LocalDateTime.now())
-                .content(postCreateRequestDto.getContent())
+                .content(postCreateRQ.getContent())
                 .imageUrl(imageUrl)
                 .build();
     }
 
-    public static PostDTO.PostCreateResponseDto toPostCreate(Post post){
-        return PostDTO.PostCreateResponseDto.builder()
+    public static PostDTO.PostCreateRP toPostCreate(Post post){
+        return PostDTO.PostCreateRP.builder()
                 .title(post.getTitle())
                 .postId(post.getId())
                 .memberId(post.getMember().getId())
@@ -51,8 +51,8 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostDTO.PostUpdateResponseDto toPostUpdate(Post post){
-        return PostDTO.PostUpdateResponseDto.builder()
+    public static PostDTO.PostUpdateRP toPostUpdate(Post post){
+        return PostDTO.PostUpdateRP.builder()
                 .postId(post.getId())
                 .memberId(post.getMember().getId())
                 .title(post.getTitle())

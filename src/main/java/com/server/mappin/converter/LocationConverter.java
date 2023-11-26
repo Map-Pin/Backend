@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LocationConverter {
 
-    public static LocationDTO.LocationListResponseDTO toLocationList(List<Lost>losts){
-        return LocationDTO.LocationListResponseDTO.builder()
-                .result(losts.stream().map(lost -> LocationDTO.LocationResponseDTO.builder()
+    public static LocationDTO.LocationListRP toLocationList(List<Lost>losts){
+        return LocationDTO.LocationListRP.builder()
+                .result(losts.stream().map(lost -> LocationDTO.LocationRP.builder()
                                 .id(lost.getId())
                                 .title(lost.getTitle())
                                 .createdAt(lost.getCreatedAt())

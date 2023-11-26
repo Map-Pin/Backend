@@ -1,6 +1,5 @@
 package com.server.mappin.dto.Shop;
 
-import com.server.mappin.dto.Location.LocationDTO;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,12 +11,12 @@ import java.util.List;
 public class ShopDTO {
   @Builder
   @Data
-  public static class ShopListResponseDTO {
-    private List<ShopDTO.ShopResponseDTO> result;
+  public static class ShopListRP {
+    private List<ShopRP> result;
   }
   @Builder
   @Data
-  public static class ShopResponseDTO {
+  public static class ShopRP {
     private Long id;
     private String title;
     private LocalDateTime createdAt;
@@ -27,14 +26,14 @@ public class ShopDTO {
 
   @Builder
   @Data
-  public static class ShopRegisterRequestDto{
+  public static class ShopRegisterRQ {
     private String name;
     private String address;
     private String companyNumber;
   }
   @Builder
   @Data
-  public static class ShopRegisterResponseDto{
+  public static class ShopRegisterRP {
     private Long id;
     private Long memberId;
     private Long shopId;

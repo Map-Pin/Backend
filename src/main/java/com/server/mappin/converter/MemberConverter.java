@@ -20,8 +20,6 @@ public class MemberConverter {
 
     public static AdminLoginResponseDto toAdminLogin(Member member, String jwt, Point point, long expires ){
         return AdminLoginResponseDto.builder()
-                .statusCode(201)
-                .isSuccess("true")
                 .id(member.getId())
                 .jwt(jwt)
                 .token_type("Bearer")
@@ -33,8 +31,6 @@ public class MemberConverter {
 
     public static UserLoginResponseDto toUserLogin(Member member,String jwt, long expires){
         return UserLoginResponseDto.builder()
-                .statusCode(200)
-                .isSuccess("true")
                 .id(member.getId())
                 .role(member.getRole().name())
                 .jwt(jwt)
