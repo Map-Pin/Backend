@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class ErrorReasonDto {
     private final HttpStatus httpStatus;
-    private final boolean isSuccess;
+    private final boolean success;
     private final String code;
     private final String message;
 
