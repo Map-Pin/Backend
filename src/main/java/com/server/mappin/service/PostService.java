@@ -11,5 +11,4 @@ public interface PostService {
   PostDTO.PostUpdateRP update(Long postId, PostDTO.PostUpdateRQ postUpdateRQ, MultipartFile image, String email) throws IOException;
 
   PostDTO.PostSearchRP search(Long id);
-
 }
