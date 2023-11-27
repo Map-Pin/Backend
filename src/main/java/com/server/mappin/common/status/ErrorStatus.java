@@ -23,6 +23,13 @@ public enum ErrorStatus implements BaseErrorCode {
     // 예시,,,
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),
 
+    // MapService Error
+    MAP_DONG_NOT_FOUND(HttpStatus.NOT_FOUND, "DONG4001", "동이 존재하지 않습니다"),
+    MAP_NO_DOCUMENT(HttpStatus.NOT_FOUND, "MAP4001", "문서가 존재하지 않습니다"),
+
+    // S3Service ERRor
+    S3_NOT_CONVERTABLE(HttpStatus.NOT_MODIFIED, "S33004", "변환이 안됩니다"),
+
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트");
 
     private final HttpStatus httpStatus;
