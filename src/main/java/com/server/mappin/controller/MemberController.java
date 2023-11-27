@@ -28,8 +28,7 @@ public class MemberController {
 
     @Operation(summary = "로그인", description = "새로운 회원은 회원가입, 기존 회원은 로그인")
     @ApiResponses(value = {
-            @ApiResponse(responseCode ="200",description ="일반 사용자 로그인", content = @Content(schema = @Schema(implementation = UserLoginResponseDto.class))),
-            @ApiResponse(responseCode = "201",description = "가게 주인 로그인", content = @Content(schema = @Schema(implementation = AdminLoginResponseDto.class)))
+            @ApiResponse(responseCode ="200",description ="일반 사용자 로그인"),
     })
     @PostMapping("/login")
     public BaseResponseDto<LoginResponseDto> login(@RequestBody MemberLoginDto memberCreateDto){

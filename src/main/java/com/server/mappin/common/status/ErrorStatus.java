@@ -1,5 +1,7 @@
 package com.server.mappin.common.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.mappin.common.BaseErrorCode;
 import com.server.mappin.common.ErrorReasonDto;
 import lombok.AllArgsConstructor;
@@ -23,7 +25,11 @@ public enum ErrorStatus implements BaseErrorCode {
     // 예시,,,
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),
 
-    TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트");
+    //JWT 토큰 관련 에러
+    JWT_BAD_REQUEST(HttpStatus.BAD_REQUEST,"TOKEN400","잘못된 JWT 서명입니다."),
+    JWT_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "TOKEN401","유효한 JWT 토큰이 없습니다"),
+    JWT_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED,"TOKEN402","액세스 토큰이 만료되었습니다"),
+    JWT_TOKEN_UNSUPPORTED(HttpStatus.UNAUTHORIZED,"TOKEN403","지원하지 않는 JWT 토큰입니다");
 
     private final HttpStatus httpStatus;
     private final String code;
@@ -47,4 +53,5 @@ public enum ErrorStatus implements BaseErrorCode {
                 .success(false)
                 .build();
     }
+
 }
