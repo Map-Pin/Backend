@@ -35,23 +35,18 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public LoginResponseDto login(MemberLoginDto memberCreateDto) {
-        Member save;
-        String jwt;
+        Member save = null;
+        String jwt = null;
         Optional<Member> existingMember = memberRepository.findByEmail(memberCreateDto.getEmail());
 
-        if (existingMember.isPresent()) {
-            save = existingMember.get();
-        } else {
-            Member member = MemberConverter.toMember(memberCreateDto);
-            save = memberRepository.save(member);
-        }
+        save = existingMember.orElseGet(()->memberRepository.save(MemberConverter.toMember(memberCreateDto)));
         jwt = tokenProvider.generateToken(save.getEmail(), save.getRole().toString());
+
         if(save.getRole() == Role.OWNER){
             Optional<Shop> byMember = shopRepository.findByMember(save);
             if(byMember.isPresent()){
                 Shop shop = byMember.get();
                 Point point = mapService.GetLocalInfo(shop.getAddress());
-
                 return MemberConverter.toAdminLogin(save,jwt,point,accessTokenValidityInMilliseconds);
             }
         }
