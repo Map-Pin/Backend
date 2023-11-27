@@ -76,7 +76,7 @@ public class LostServiceImpl implements LostService {
 
     @Override
     @Transactional
-    public LostDTO.LostRegisterRP registerLost(LostDTO.LostRegisterRQ lostRegisterRQ, MultipartFile image, String email) throws IOException{
+    public LostDTO.LostRegisterRP registerLost(LostDTO.LostRegisterRQ lostRegisterRQ, MultipartFile image, String email) throws IOException {
         //String으로 받아온 yyyy-MM-dd를 LocalDate 형식으로 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(lostRegisterRQ.getFoundDate(),formatter);
