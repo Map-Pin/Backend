@@ -34,13 +34,14 @@ public class S3ServiceImpl implements S3Service {
         // S3에 저장할 파일명
         String fileName = dirName + "/" + UUID.randomUUID() + "_" + convertFile.getName();
 
+        String uploadImageUrl = "";
         // S3에 파일 업로드
         try {
             amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, convertFile).withCannedAcl(CannedAccessControlList.PublicRead));
+            uploadImageUrl = amazonS3Client.getUrl(bucket, fileName).toString();
         } catch (Exception e){
-
+            throw new S3Handler(ErrorStatus.S3_UPLOAD_FAILED);
         }
-        String uploadImageUrl = amazonS3Client.getUrl(bucket, fileName).toString();
 
         // 로컬 파일 삭제
         convertFile.delete();
@@ -50,13 +51,21 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public String findByUrl(String url){
-        return amazonS3Client.getUrl(bucket,url).toString();
+        try {
+            return amazonS3Client.getUrl(bucket, url).toString();
+        } catch(Exception e){
+            throw new S3Handler(ErrorStatus.S3_URL_NOT_FOUND);
+        }
     }
 
     // S3 파일 삭제
     @Override
     public void delete(String path) {
-        amazonS3Client.deleteObject(bucket, path);
+        try {
+            amazonS3Client.deleteObject(bucket, path);
+        } catch(Exception e){
+            throw new S3Handler(ErrorStatus.S3_DELETE_FAILED);
+        }
     }
 
     // 파일 convert 후 로컬에 업로드
@@ -67,7 +76,8 @@ public class S3ServiceImpl implements S3Service {
                 fos.write(file.getBytes());
             }
             return Optional.of(convertFile);
+        } else{
+            throw new S3Handler(ErrorStatus.S3_WRONG_PATH); // Or handle the error appropriately here
         }
-        return Optional.empty();
     }
 }
