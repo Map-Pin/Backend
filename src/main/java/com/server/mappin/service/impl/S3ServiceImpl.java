@@ -3,6 +3,8 @@ package com.server.mappin.service.impl;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.server.mappin.common.status.ErrorStatus;
+import com.server.mappin.exception.handler.S3Handler;
 import com.server.mappin.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,14 +29,17 @@ public class S3ServiceImpl implements S3Service {
     @Override
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
         // MultipartFile -> File
-        File convertFile = convert(multipartFile)
-                .orElseThrow(() -> new IllegalArgumentException("file convert error")); // 파일을 변환할 수 없으면 에러
+        File convertFile = convert(multipartFile).orElseThrow(() -> new S3Handler(ErrorStatus.S3_NOT_CONVERTABLE)); // 파일을 변환할 수 없으면 에러
 
         // S3에 저장할 파일명
         String fileName = dirName + "/" + UUID.randomUUID() + "_" + convertFile.getName();
 
         // S3에 파일 업로드
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, convertFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        try {
+            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, convertFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch (Exception e){
+
+        }
         String uploadImageUrl = amazonS3Client.getUrl(bucket, fileName).toString();
 
         // 로컬 파일 삭제
