@@ -1,5 +1,7 @@
 package com.server.mappin.auth.token;
 
+import com.server.mappin.common.status.ErrorStatus;
+import com.server.mappin.exception.handler.JwtHandler;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -96,14 +98,17 @@ public class TokenProvider implements InitializingBean {
             return true;
         }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e){
             log.info("잘못된 JWT 서명입니다");
+            throw new JwtHandler(ErrorStatus.JWT_BAD_REQUEST);
         }catch (ExpiredJwtException e){
             log.info("만료된 JWT 토큰입니다");
+            throw new JwtHandler(ErrorStatus.JWT_ACCESS_TOKEN_EXPIRED);
         }catch (UnsupportedJwtException e){
             log.info("지원되지 않는 JWT 토큰입니다");
+            throw new JwtHandler(ErrorStatus.JWT_TOKEN_UNSUPPORTED);
         }catch (IllegalArgumentException e){
             log.info("JWT 토큰이 잘못되었습니다");
+            throw new JwtHandler(ErrorStatus.JWT_BAD_REQUEST);
         }
-        return false;
     }
 
     //Request 헤더에서 토큰 꺼내오기
