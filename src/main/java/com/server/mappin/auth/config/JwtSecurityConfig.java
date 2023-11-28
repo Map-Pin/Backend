@@ -1,6 +1,5 @@
 package com.server.mappin.auth.config;
 
-import com.server.mappin.auth.filter.JwtExceptionFilter;
 import com.server.mappin.auth.filter.JwtRequestFilter;
 import com.server.mappin.auth.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +12,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
     private final TokenProvider tokenProvider;
 
-
     @Override
     public void configure(HttpSecurity http){
         JwtRequestFilter filter = new JwtRequestFilter(tokenProvider);
-        JwtExceptionFilter exceptionFilter = new JwtExceptionFilter();
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(exceptionFilter, JwtRequestFilter.class);
     }
 }

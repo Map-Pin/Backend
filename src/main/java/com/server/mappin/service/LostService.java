@@ -1,24 +1,265 @@
 package com.server.mappin.service;
 
-import com.server.mappin.dto.Category.CategoryDTO;
-import com.server.mappin.dto.Location.LocationDTO;
-import com.server.mappin.dto.Lost.*;
-import com.server.mappin.dto.Shop.ShopDTO;
+import com.server.mappin.domain.*;
+import com.server.mappin.dto.*;
+import com.server.mappin.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public interface LostService {
-  CategoryDTO.CategoryListRP findByCategory(String categoryName);
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class LostService {
+    private final LostRepository lostRepository;
+    private final MemberRepository memberRepository;
+    private final CategoryRepository categoryRepository;
+    private final LocationRepository locationRepository;
+    private final MapService mapService;
+    private final S3Service s3Service;
 
-  LocationDTO.LocationListRP findByCurrentLocation(Double x, Double y);
+  public FindByCategoryListResponseDto findByCategory(String categoryName) {
+    List<Lost> losts = lostRepository.findByCategory(categoryName);
 
-  LostDTO.LostRegisterRP registerLost(LostDTO.LostRegisterRQ lostRegisterRQ, MultipartFile image, String email) throws IOException;
-  LocationDTO.LocationListRP findByDong(String dongName);
+    return FindByCategoryListResponseDto.builder()
+            .statusCode(200)
+            .isSuccess("true")
+            .losts(losts.stream().map(lost -> FindByCategoryResponseDto.builder()
+                    .id(lost.getId())
+                    .title(lost.getTitle())
+                    .createdAt(lost.getCreatedAt())
+                    .imageUrl(lost.getImageUrl())
+                            .dong(lost.getLocation().getDong())
+                    .build())
+                    .collect(Collectors.toList()))
+            .build();
+  }
 
-  LostDTO.LostSearchByIdRP getById(Long id);
+  public FindByDongListResponseDto findByDong(String dongName) {
+    List<Lost> dongs = lostRepository.findLocationByDong(dongName);
+    return FindByDongListResponseDto.builder()
+            .statusCode(200)
+            .isSuccess("true")
+            .losts(dongs.stream().map(lost -> FindByDongResponseDto.builder()
+                            .id(lost.getId())
+                            .title(lost.getTitle())
+                            .createdAt(lost.getCreatedAt())
+                            .imageUrl(lost.getImageUrl())
+                            .dong(dongName)
+                            .build())
+                    .collect(Collectors.toList()))
+            .build();
+  }
 
-  LostDTO.LostUpdateRP update(Long lostId, LostDTO.LostUpdateRQ lostUpdateRQ, MultipartFile image, String email) throws IOException;
+  public FindByShopListResponseDto findByShop(String shopName) {
+    List<Lost> shops = lostRepository.findLostByShopName(shopName);
+    return FindByShopListResponseDto.builder()
+            .statusCode(200)
+            .isSuccess("true")
+            .losts(shops.stream().map(lost -> FindByShopResponseDto.builder()
+                            .id(lost.getId())
+                            .title(lost.getTitle())
+                            .createdAt(lost.getCreatedAt())
+                            .imageUrl(lost.getImageUrl())
+                            .shopName(shopName)
+                            .dong(lost.getLocation().getDong())
+                            .build())
+                    .collect(Collectors.toList()))
+            .build();
+  }
 
-  ShopDTO.ShopListRP findByShop(String shopName);
+  /*public FindByDongListResponseDto findByCurrentLocation(Double x, Double y) {
+    String dong = mapService.getDong(x, y);
+    Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
+    if (locationByDong.isPresent()) {
+      Location location = locationByDong.get();
+      return findByDong(location.getDong());
+    }
+    return null;
+  }
+  */
+
+  public FindByDongListResponseDto findByCurrentLocation(Double x, Double y) {
+    List<Lost> locationByDong = lostRepository.findAll();
+    return FindByDongListResponseDto.builder()
+            .statusCode(200)
+            .isSuccess("true")
+            .losts(locationByDong.stream().map(lost -> FindByDongResponseDto.builder()
+                            .id(lost.getId())
+                            .title(lost.getTitle())
+                            .createdAt(lost.getCreatedAt())
+                            .imageUrl(lost.getImageUrl())
+                            .dong(lost.getLocation().getDong())
+                            .build())
+                    .collect(Collectors.toList()))
+            .build();
+  }
+
+
+
+    @Transactional
+    public LostRegisterResponseDto registerLost(LostRegisterRequestDto lostRegisterRequestDto, MultipartFile image, String email) throws IOException {
+        //String으로 받아온 yyyy-MM-dd를 LocalDate 형식으로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(lostRegisterRequestDto.getFoundDate(),formatter);
+        //회원, 카테고리 찾기
+        Optional<Member> memberRepositoryByEmail = memberRepository.findByEmail(email);
+        Optional<Category> categoryByName = categoryRepository.findCategoryByName(lostRegisterRequestDto.getCategory());
+        //x,y좌표로 동네 찾고 동네가 DB에 존재하는지 확인
+        String dong = mapService.getDong(lostRegisterRequestDto.getX(), lostRegisterRequestDto.getY());
+        Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
+        //이미지 S3에 업로드
+        String imageUrl = s3Service.upload(image, "images");
+        System.out.println("memberRepositoryByEmail = " + memberRepositoryByEmail);
+        System.out.println("dong = " + locationByDong);
+        System.out.println("categoryByName = " + categoryByName);
+        if(memberRepositoryByEmail.isPresent() && categoryByName.isPresent() && locationByDong.isPresent()){
+            Member member = memberRepositoryByEmail.get();
+            Location location = locationByDong.get();
+            Category category = categoryByName.get();
+            Lost lost = Lost.builder()
+                    .title(lostRegisterRequestDto.getTitle())
+                    .content(lostRegisterRequestDto.getContent())
+                    .x(lostRegisterRequestDto.getX())
+                    .y(lostRegisterRequestDto.getY())
+                    .foundDate(localDate)
+                    .imageUrl(imageUrl)
+                    .createdAt(LocalDateTime.now())
+                    .category(category)
+                    .location(location)
+                    .member(member)
+                    .build();
+            Lost save = lostRepository.save(lost);
+            return LostRegisterResponseDto.builder()
+                    .statusCode(200)
+                    .isSuccess("true")
+                    .title(lost.getTitle())
+                    .content(lost.getContent())
+                    .x(lost.getX())
+                    .y(lost.getY())
+                    .foundDate(lost.getFoundDate())
+                    .createdAt(lost.getCreatedAt())
+                    .image(lost.getImageUrl())
+                    .category(lost.getCategory().getName())
+                    .memberId(lost.getMember().getId())
+                    .dong(location.getDong())
+                    .lostId(lost.getId())
+                    .build();
+
+        }
+        return LostRegisterResponseDto.builder()
+                .statusCode(400)
+                .isSuccess("false")
+                .build();
+
+    }
+
+    public LostSearchByIdResponseDto getById(Long id){
+        Optional<Lost> lostById = lostRepository.findById(id);
+        return lostById
+                .map(lost -> LostSearchByIdResponseDto.builder()
+                        .statusCode(200)
+                        .isSuccess("true")
+                        .title(lost.getTitle())
+                        .content(lost.getContent())
+                        .x(lost.getX())
+                        .y(lost.getY())
+                        .foundDate(lost.getFoundDate())
+                        .category(lost.getCategory().getName())
+                        .dong(lost.getLocation().getDong())
+                        .createdAt(lost.getCreatedAt())
+                        .image(lost.getImageUrl())
+                        .build())
+                .orElse(LostSearchByIdResponseDto.builder()
+                        .statusCode(400)
+                        .isSuccess("false")
+                        .build());
+    }
+    @Transactional
+  public LostUpdateResponseDto update(Long lostId, LostUpdateRequestDto lostUpdateRequestDto, MultipartFile image, String email) throws IOException {
+    Lost lost = lostRepository.findById(lostId).orElseThrow(() -> new NullPointerException("해당 아이디가 존재하지 않습니다"));
+    Optional<Member> member = memberRepository.findByEmail(email);
+    if(member.isEmpty()){
+      return LostUpdateResponseDto.builder()
+              .statusCode(400)
+              .isSuccess("false")
+              .build();
+    }
+    else if(!member.get().getId().equals(lost.getMember().getId())){
+      return LostUpdateResponseDto.builder()
+              .statusCode(400)
+              .isSuccess("false")
+              .build();
+    }
+    System.out.println("member = " + member.get().getName());
+
+    // 업데이트 필드를 확인하고 필요한 경우 업데이트
+    if (lostUpdateRequestDto.getFoundDate() != null) {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+      LocalDate localDate = LocalDate.parse(lostUpdateRequestDto.getFoundDate(), formatter);
+      lost.setFoundDate(localDate);
+    }
+
+    if (lostUpdateRequestDto.getX() != null && lostUpdateRequestDto.getY() != null) {
+      String dong = mapService.getDong(lostUpdateRequestDto.getX(), lostUpdateRequestDto.getY());
+      Optional<Location> locationByDong = locationRepository.findLocationByDong(dong);
+      locationByDong.ifPresent(lost::setLocation);
+    }
+
+    if (lostUpdateRequestDto.getCategory() != null) {
+      Optional<Category> categoryByName = categoryRepository.findCategoryByName(lostUpdateRequestDto.getCategory());
+      categoryByName.ifPresent(lost::setCategory);
+    }
+
+    if (lostUpdateRequestDto.getContent() != null) {
+      lost.setContent(lostUpdateRequestDto.getContent());
+    }
+
+    if (lostUpdateRequestDto.getTitle() != null) {
+      lost.setTitle(lostUpdateRequestDto.getTitle());
+    }
+
+    if (image != null) {
+      // 이미지 업로드 및 기존 이미지 삭제 처리
+      if (!s3Service.findByUrl(lost.getImageUrl()).isEmpty()) {
+        s3Service.delete(lost.getImageUrl());
+      }
+      String imageUrl = s3Service.upload(image, "images");
+      lost.setImageUrl(imageUrl);
+    }
+
+    // 게시물 업데이트
+    Lost updatedLost = lostRepository.save(lost);
+
+    if (updatedLost != null) {
+      return LostUpdateResponseDto.builder()
+              .statusCode(200)
+              .isSuccess("true")
+              .lostId(updatedLost.getId())
+              .image(updatedLost.getImageUrl())
+              .createdAt(updatedLost.getCreatedAt())
+              .content(updatedLost.getContent())
+              .x(updatedLost.getX())
+              .y(updatedLost.getY())
+              .dong(updatedLost.getLocation().getDong())
+              .category(updatedLost.getCategory().getName())
+              .foundDate(updatedLost.getFoundDate())
+              .build();
+    } else {
+      return LostUpdateResponseDto.builder()
+              .statusCode(400)
+              .isSuccess("false")
+              .build();
+    }
+  }
 }
