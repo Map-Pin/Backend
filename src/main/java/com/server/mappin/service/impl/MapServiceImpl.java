@@ -1,5 +1,7 @@
 package com.server.mappin.service.impl;
 
+import com.server.mappin.common.status.ErrorStatus;
+import com.server.mappin.exception.handler.MapHandler;
 import com.server.mappin.service.MapService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -27,18 +30,15 @@ public class MapServiceImpl implements MapService {
     @Override
     public Point GetLocalInfo(String address){
         String apiUrl = "https://dapi.kakao.com/v2/local/search/address.json";
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization","KakaoAK "+apiKey);
-        HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
+        HttpEntity<Object> httpEntity = getHttpEntity();
         URI builder = UriComponentsBuilder
                 .fromUriString(apiUrl)
                 .queryParam("query",address)
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUri();
-        ResponseEntity<Map<String,Object>> response = new RestTemplate().exchange(builder, HttpMethod.GET, httpEntity, new ParameterizedTypeReference<Map<String,Object>>() {});
-        Map<String,Object> responseBody = response.getBody();
-        List<Map<String,Object>> documents = (List<Map<String, Object>>)responseBody.get("documents");
+        List<Map<String,Object>> documents = getDocuments(builder, httpEntity);
+
         if(!documents.isEmpty()){
             Map<String,Object> firstDocument = documents.get(0);
             Object xObject = firstDocument.get("x");
@@ -46,7 +46,6 @@ public class MapServiceImpl implements MapService {
             if(xObject instanceof Double && yObject instanceof Double){
                 Double xCoordinate = (Double) xObject;
                 Double yCoordinate = (Double) yObject;
-                Point point = new Point(xCoordinate,yCoordinate);
                 return new Point(xCoordinate,yCoordinate);
             }else if(xObject instanceof String && yObject instanceof String){
                 try{
@@ -54,9 +53,11 @@ public class MapServiceImpl implements MapService {
                     Double yCoordinate = Double.parseDouble((String) yObject);
                     return new Point(xCoordinate,yCoordinate);
                 }catch (NumberFormatException e){
-                    log.error(e.getMessage());
+                    log.info("MapService GetLocalInfo 잘못된 숫자형식입니다");
                 }
             }
+        } else {
+            throw new MapHandler(ErrorStatus.MAP_DONG_NOT_FOUND);
         }
         return null;
     }
@@ -64,10 +65,7 @@ public class MapServiceImpl implements MapService {
     @Override
     public String getDong(Double xCoordinate, Double yCoordinate){
         String apiUrl = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json";
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization","KakaoAK "+apiKey);
-        HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
-        System.out.println("xCoordinate = " + xCoordinate);
+        HttpEntity<Object> httpEntity = getHttpEntity();
         URI builder = UriComponentsBuilder
                 .fromUriString(apiUrl)
                 .queryParam("x",xCoordinate)
@@ -75,14 +73,33 @@ public class MapServiceImpl implements MapService {
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUri();
-        ResponseEntity<Map<String,Object>> response = new RestTemplate().exchange(builder, HttpMethod.GET, httpEntity, new ParameterizedTypeReference<Map<String,Object>>() {});
-        Map<String,Object> responseBody = response.getBody();
-        List<Map<String,Object>> documents = (List<Map<String, Object>>)responseBody.get("documents");
+        List<Map<String,Object>> documents = getDocuments(builder, httpEntity);
         if(!documents.isEmpty()){
             Map<String,Object> firstDocument = documents.get(0);
             Object dong = firstDocument.get("region_3depth_name");
             return (String)dong;
+        } else {
+            throw new MapHandler(ErrorStatus.MAP_DONG_NOT_FOUND);
         }
-        return null;
     }
+
+    private List<Map<String, Object>> getDocuments(URI builder, HttpEntity<Object> httpEntity) {
+        try {
+            ResponseEntity<Map<String, Object>> response = new RestTemplate().exchange(builder, HttpMethod.GET, httpEntity, new ParameterizedTypeReference<Map<String, Object>>() {
+            });
+            Map<String, Object> responseBody = response.getBody();
+            return (List<Map<String, Object>>) responseBody.get("documents");
+        }
+        catch (Exception e){
+            throw new MapHandler(ErrorStatus.MAP_NO_DOCUMENT);
+        }
+    }
+
+    private HttpEntity<Object> getHttpEntity(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization","KakaoAK "+apiKey);
+        HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
+        return httpEntity;
+    }
+
 }

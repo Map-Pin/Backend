@@ -37,7 +37,7 @@ public class PostController {
             @RequestPart("image")MultipartFile image,
             @RequestPart("info") PostDTO.PostCreateRQ postCreateDto,
             Authentication authentication
-            ) throws IOException {
+    ) throws IOException {
         try{
             String email = authentication.getName();
             PostDTO.PostCreateRP postCreateRP = postService.create(postCreateDto,image, email);

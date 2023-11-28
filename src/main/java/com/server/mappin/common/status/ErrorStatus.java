@@ -25,6 +25,17 @@ public enum ErrorStatus implements BaseErrorCode {
     // 예시,,,
     ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "ARTICLE4001", "게시글이 없습니다."),
 
+    // MapService Error
+    MAP_DONG_NOT_FOUND(HttpStatus.NOT_FOUND, "DONG4001", "동이 존재하지 않습니다"),
+    MAP_NO_DOCUMENT(HttpStatus.NOT_FOUND, "MAP4001", "문서가 존재하지 않습니다"),
+
+    // S3Service ERRor
+    S3_NOT_CONVERTABLE(HttpStatus.NOT_MODIFIED, "S33004", "변환이 안됩니다"),
+    S3_UPLOAD_FAILED(HttpStatus.FORBIDDEN, "S34003", "S3 업로드에 실패하셨습니다"),
+    S3_WRONG_PATH(HttpStatus.BAD_REQUEST, "S34000", "S3 요청 Path가 잘못되었습니다"),
+    S3_URL_NOT_FOUND(HttpStatus.NOT_FOUND, "S34001", "S3 URL을 가져올 수 없습니다"),
+    S3_DELETE_FAILED(HttpStatus.FORBIDDEN, "S34003", "S3 삭제에 실패하셨습니다"),
+    TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트"),
     //JWT 토큰 관련 에러
     JWT_BAD_REQUEST(HttpStatus.BAD_REQUEST,"TOKEN400","잘못된 JWT 서명입니다."),
     JWT_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "TOKEN401","유효한 JWT 토큰이 없습니다"),
@@ -53,5 +64,4 @@ public enum ErrorStatus implements BaseErrorCode {
                 .success(false)
                 .build();
     }
-
 }

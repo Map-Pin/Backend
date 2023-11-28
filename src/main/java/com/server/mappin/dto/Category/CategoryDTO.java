@@ -14,12 +14,14 @@ public class CategoryDTO {
   public static class CategoryListRP {
     private List<CategoryRP> result;
   }
+
   @Builder
   @Data
   public static class CategoryRP {
     private Long id;
     private String title;
-    private LocalDateTime creatdAt;
+    private LocalDateTime createdAt;
     private String imageUrl;
+    private String dong;
   }
 }

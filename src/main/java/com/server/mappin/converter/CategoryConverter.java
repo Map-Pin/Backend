@@ -13,7 +13,7 @@ public class CategoryConverter {
                 .result(losts.stream().map(lost -> CategoryDTO.CategoryRP.builder()
                                 .id(lost.getId())
                                 .title(lost.getTitle())
-                                .creatdAt(lost.getCreatedAt())
+                                .createdAt(lost.getCreatedAt())
                                 .imageUrl(lost.getImageUrl())
                                 .build())
                         .collect(Collectors.toList()))
