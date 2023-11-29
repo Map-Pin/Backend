@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class ChatService {
-    private Map<String, ChatRoom> chatRooms;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
     private final ChatRepository chatRepository;
@@ -38,14 +37,12 @@ public class ChatService {
     }
     //채팅방 하나 불러오기
     public ChatRoom findById(String roomId) {
-        return chatRooms.get(roomId);
+        return chatRoomRepository.findByRoomId(roomId);
     }
     //채팅방 생성
     public ChatRoom createRoom(String name) {
         ChatRoom chatRoom = ChatRoom.create(name);
-        chatRooms.put(chatRoom.getRoomId(), chatRoom);
-        chatRoomRepository.save(chatRoom);
-        return chatRoom;
+        return chatRoomRepository.save(chatRoom);
     }
 
 
