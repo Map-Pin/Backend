@@ -29,7 +29,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                 .success(false)
                 .build();
 
-        log.error("Unathroized error");
+        log.error("Unauthorized error");
         //response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 
         ObjectMapper objectMapper = new ObjectMapper();
